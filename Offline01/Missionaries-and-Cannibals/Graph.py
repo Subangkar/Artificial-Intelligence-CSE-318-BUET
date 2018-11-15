@@ -1,7 +1,7 @@
 from collections import defaultdict
 from State import State
 
-listStates = [];
+listStates = []
 
 
 # This class represents a directed graph
@@ -50,12 +50,13 @@ class Graph:
 				self.bfs_parent[State(-1, -1, 0)] = u
 				return self.bfs_parent
 
-			for v in self.graph[u]:
+			for v in u.successors():
 				if not visited[v]:
 					self.bfs_parent[v] = u
 					queue.append(v)
 					visited[v] = True
 					v.level = u.level + 1;
+		self.bfs_parent = {}
 		return []
 
 	def print(self):

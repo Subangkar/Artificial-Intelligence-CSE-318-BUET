@@ -1,5 +1,5 @@
-MAX_M = 3
-MAX_C = 3
+MAX_M = 5
+MAX_C = 5
 # MAX_B = 2
 CAP_BOAT = 2
 
@@ -38,8 +38,8 @@ class State(object):
 					newState = State(self.missionaries + sgn * m, self.cannibals + sgn * c, self.dir + sgn * 1);
 					if newState.isValid():
 						newState.action = "take %d missionaries and %d cannibals %s." % (m, c, direction)
-						newState.missionariesPassed = newState.missionariesPassed + (-sgn) * m
-						newState.cannibalsPassed = newState.cannibalsPassed + (-sgn) * c
+						newState.missionariesPassed = self.missionariesPassed - sgn * m
+						newState.cannibalsPassed = self.cannibalsPassed - sgn * c
 						list.append(newState)
 					# 	if self.missionaries == 3 and self.cannibals == 2 and m == 1 and c == 1 and self.dir == 1:
 					# 		print(">>> ")
@@ -55,10 +55,10 @@ class State(object):
 				self.dir != 0 and self.dir != 1):
 			return False
 		# then check whether missionaries outnumbered by cannibals
-		if self.cannibals > self.missionaries > 0:  # more cannibals then missionaries on original shore
+		if (self.cannibals > self.missionaries > 0) or (self.cannibalsPassed > self.missionariesPassed > 0):  # more cannibals then missionaries on original shore
 			return False
-		if (MAX_M==MAX_C and self.cannibals < self.missionaries < MAX_C):  # more cannibals then missionaries on other shore
-			return False
+		# if (MAX_M==MAX_C and self.cannibals < self.missionaries < MAX_C):  # more cannibals then missionaries on other shore
+		# 	return False
 		return True
 
 	def is_goal_state(self):
@@ -66,7 +66,7 @@ class State(object):
 
 	def __repr__(self):
 		# return "< State (%d, %d, %d) >\n%s" % (self.missionaries, self.cannibals, self.dir,self.action)
-		return "%s\n< @Depth:%d State (%d, %d, %d, %d, %d) >" % (self.action,self.level, self.missionaries, self.cannibals, self.dir,self.missionariesPassed,self.cannibalsPassed)
+		return "\n%s\n\n< @Depth:%d State (%d, %d, %d, %d, %d) >" % (self.action,self.level, self.missionaries, self.cannibals, self.dir,self.missionariesPassed,self.cannibalsPassed)
 
 	def __eq__(self, other):
 		return self.missionaries == other.missionaries and self.cannibals == other.cannibals and self.dir == other.dir

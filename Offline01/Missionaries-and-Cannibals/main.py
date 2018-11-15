@@ -22,16 +22,15 @@ def generateAllStates(nMissionaries, nCannibals):
 
 def generateGraph(g):
 	for state in listStates:
-				childs = state.successors()
-				# print(state,end=" -> ")
-				# print(childs)
-				for child in childs:
-					g.addEdge(state, child)
-
+		childs = state.successors()
+		# print(state,end=" -> ")
+		# print(childs)
+		for child in childs:
+			g.addEdge(state, child)
 
 
 def main():
-	sys.stdout = open("out.txt","w")
+	sys.stdout = open("out.txt", "w")
 	# # solution = breadth_first_tree_search(initial_state)
 	# if solution is None:
 	#   print "no solution"
@@ -40,16 +39,22 @@ def main():
 	#   for step in solution:
 	#     print "%s" % step
 	# print "elapsed time: %.2fs" % time.clock()
-	generateAllStates(MAX_M,MAX_C)
+	generateAllStates(MAX_M, MAX_C)
 	g = Graph()
 	generateGraph(g)
 	# g.print()
-	initial_state=State(MAX_M,MAX_C,1)
-	p=g.BFS(initial_state)
-	g.printPath(p,State(-1,-1,0))
-	# print(p)
-	# g.print()
-	# print(State(MAX_M,MAX_C,1).successors())
+	initial_state = State(MAX_M, MAX_C, 1)
+	p = g.BFS(initial_state)
+	# print(len(p))
+	if len(p):
+		g.printPath(p, State(-1, -1, 0))
+	else:
+		print("No Solution")
+
+
+# g.print()
+# print(State(3,3,1).successors().pop(2))
+# print(State(3,3,1).successors().pop(2).successors())
 
 
 if __name__ == '__main__':

@@ -39,7 +39,7 @@ def main():
 	start_time = time.time_ns();
 	g = Graph()
 	# generateAllStates(MAX_M, MAX_C)
-	generateGraph(g)
+	# generateGraph(g)
 	# g.print()
 	p = g.BFS(INITIAL_STATE)
 	if len(p):

@@ -1,26 +1,31 @@
-MAX_M = 80
-MAX_C = 50
-# MAX_B = 2
-CAP_BOAT = 3
+MAX_M = 3
+MAX_C = 3
+CAP_BOAT = 2
+
+# from Constants import MAX_M
+# from Constants import MAX_C
+# from Constants import CAP_BOAT
+
+# from Constants import INITIAL_STATE
+# from Constants import TERMINAL_STATE
+
+from Constants import Direction
+
+# from Constants import TERMINAL_STATE, INITIAL_STATE
 
 
-class Direction:
-	OLD_TO_NEW = 1
-	NEW_TO_OLD = 0
+
+# class CONST:
+# 	MAX_M = 30
+# 	MAX_C = 30
+# 	CAP_BOAT = 20
+
 
 
 # Within this object, the state is represented as described in the lecture:
 # The triple (m,c,b) holds the number of missionaries, cannibals and boats
 # on the original shore.
 class State(object):
-	def __init__(self, missionaries, cannibals, dir):
-		self.missionaries = missionaries
-		self.cannibals = cannibals
-		self.dir = dir
-		self.action = ""
-		self.level = -1
-		self.missionariesPassed = 0
-		self.cannibalsPassed = 0
 
 	def __init__(self, missionaries, cannibals, dir, missionariesPassed, cannibalsPassed, level):
 		self.missionaries = missionaries
@@ -86,8 +91,6 @@ class State(object):
 		return hash((self.missionaries, self.cannibals, self.dir))
 
 	def __ne__(self, other):
-		# Not strictly necessary, but to avoid having both x==y and x!=y
-		# True at the same time
 		return not (self == other)
 
 

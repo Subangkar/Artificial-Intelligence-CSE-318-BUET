@@ -4,13 +4,15 @@
 import sys
 import time
 from Graph import Graph
-from State import State
+from State import State, Direction, INITIAL_STATE, TERMINAL_STATE
 
 from State import MAX_M
 from State import MAX_C
+from State import CAP_BOAT
 
-from State import INITIAL_STATE
-from State import TERMINAL_STATE
+from State import INITIAL_STATE, TERMINAL_STATE
+
+
 
 from Graph import listStates
 
@@ -36,17 +38,40 @@ def generateGraph(g):
 
 def main():
 	sys.stdout = open("out.txt", "w")
-	start_time = time.time_ns();
+
+	# MAX_M=3
+	# MAX_C=3
+	# CAP_BOAT=2
+	# # State.MAX_M=30
+	# # State.MAX_C=30
+	# # State.CAP_BOAT=20
+	#
+	# INITIAL_STATE = State(MAX_M, MAX_C, Direction.OLD_TO_NEW, 0, 0,0)
+	# TERMINAL_STATE = State(-1, -1, Direction.NEW_TO_OLD, -1, -1, 0)
+
 	g = Graph()
-	# generateAllStates(MAX_M, MAX_C)
+	generateAllStates(MAX_M, MAX_C)
 	# generateGraph(g)
-	# g.print()
+	# g.printGraph()
+	print("\nBFS\n")
+	start_time = time.time_ns();
 	p = g.BFS(INITIAL_STATE)
 	if len(p):
-		g.printPath(p, TERMINAL_STATE)
+		g.printPathL(p, TERMINAL_STATE)
 	else:
 		print("No Solution")
 	print("\n Elapsed time in BFS: %.2fms" % ((time.time_ns()-start_time)/(10**6)))
+
+	print("\nDFS\n")
+
+	start_time = time.time_ns();
+	p = g.DFS(INITIAL_STATE)
+	if len(p):
+		# print(len(p))
+		g.printPathL(p, TERMINAL_STATE)
+	else:
+		print("No Solution")
+	print("\n Elapsed time in DFS: %.2fms" % ((time.time_ns()-start_time)/(10**6)))
 
 
 if __name__ == '__main__':

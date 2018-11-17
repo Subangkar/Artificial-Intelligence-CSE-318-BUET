@@ -68,9 +68,14 @@ class State(object):
 			direction = "back from the new shore to the original shore"
 		for m in range(CAP_BOAT + 1):
 			for c in range(CAP_BOAT + 1):
-				# no point of taking only one from old to new shore when other exists --need to think more
-				# if (self.dir == 1 and m + c < 2) and (self.missionaries != 0 and self.cannibals != 0):
-				# 	continue
+				# no point of taking only one from old to new shore when other exists --need to think @not sure
+				if (self.dir == Direction.OLD_TO_NEW and m + c < 2) and (self.missionaries != 0 and self.cannibals != 0):
+					continue
+
+				# missionaries < cannibals on boat
+				if 0 < m < c:
+					continue
+
 				if 1 <= m + c <= CAP_BOAT:  # check whether action and resulting state are valid
 
 					newState = State(self.missionaries + sgn * m, self.cannibals + sgn * c, self.dir + sgn * 1,
@@ -81,7 +86,7 @@ class State(object):
 		return list
 
 	def isValid(self):
-		# first check the obvious
+		# obvious
 		if self.missionaries < 0 or self.cannibals < 0 or self.missionaries > MAX_M or self.cannibals > MAX_C or (
 				self.dir != 0 and self.dir != 1):
 			return False
@@ -97,7 +102,6 @@ class State(object):
 		return self.cannibals == 0 and self.missionaries == 0 and self.dir == 0
 
 	def __repr__(self):
-		# return "< State (%d, %d, %d) >\n%s" % (self.missionaries, self.cannibals, self.dir,self.action)
 		return "\n%s\n\n< @Depth:%d State (%d, %d, %d, %d, %d) >" % (
 			self.action, self.level, self.missionaries, self.cannibals, self.dir, self.missionariesPassed,
 			self.cannibalsPassed)

@@ -44,7 +44,7 @@ class State(object):
 			sgn = 1
 			direction = "back from the new shore to the original shore"
 		# min ensures that we never increase no of jointly m,c in the old shore
-		# if we brought back more m and c than already in here it'll be pointless
+		# if we brought back more m and c than already in here it'll be pointless @not sure
 		for m in range(min(CAP_BOAT, self.missionaries) + 1):
 			for c in range(min(CAP_BOAT, self.cannibals) + 1):
 				# no point of taking only one from old to new shore when other exists --need to think @not sure

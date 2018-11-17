@@ -25,10 +25,9 @@ class Graph:
 
 	def BFS(self, s):
 		self.expandedBFS = 0
-		self.exploredBFS = 1
 
 		self.bfs_parent[s] = None
-		visited = {s: True}
+		visited = {(s.missionaries, s.cannibals, s.dir): True}
 		s.level = 0
 
 		start_time = time.time()
@@ -41,7 +40,6 @@ class Graph:
 			if u.isGoalState():
 				print("No of Expanded Nodes: " + str(self.expandedBFS))
 				print("No of Explored Nodes: " + str(visited.__len__()))
-				# print("No of Explored Nodes: " + str(self.exploredBFS))
 				queue.clear()
 				self.bfs_parent[TERMINAL_STATE] = u
 				return self.bfs_parent
@@ -53,28 +51,26 @@ class Graph:
 				else:
 					print("EXCEEDED NODE LIMIT of %d" % u.CONSTANTS.MAX_NODES)
 				print("No of Expanded Nodes: " + str(self.expandedBFS))
-				print("No of Explored Nodes: " + str(self.exploredBFS))
+				print("No of Explored Nodes: " + str(visited.__len__()))
 				queue.clear()
 				return []
 
 			for v in u.successors():
-				if v not in visited.keys():
+				if (v.missionaries, v.cannibals, v.dir) not in visited.keys():
 					self.bfs_parent[v] = u
 					v.level = u.level + 1
 					queue.append(v)
-					visited[v] = True
-					self.exploredBFS += 1
+					visited[(v.missionaries, v.cannibals, v.dir)] = True
 
 		self.bfs_parent = {}
 		return []
 
-	def DFS(self, start):
-		visited = {start: True}
-
-		self.dfs_parent[start] = None
-		stack = [start]
+	def DFS(self, s):
+		self.dfs_parent[s] = None
+		visited = {(s.missionaries, s.cannibals, s.dir): True}
 
 		start_time = time.time()
+		stack = [s]
 		while stack:
 			u = stack.pop()
 			self.expandedDFS += 1
@@ -98,8 +94,8 @@ class Graph:
 				return []
 
 			for v in u.successors():
-				if v not in visited.keys():
-					visited[v] = True
+				if (v.missionaries, v.cannibals, v.dir) not in visited.keys():
+					visited[(v.missionaries, v.cannibals, v.dir)] = True
 					self.dfs_parent[v] = u
 					stack.append(v)
 		return []

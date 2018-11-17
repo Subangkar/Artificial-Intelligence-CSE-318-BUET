@@ -4,11 +4,7 @@ from State import TERMINAL_STATE
 
 import time
 
-listStates = []
 
-
-# This class represents a directed graph
-# using adjacency list representation 
 class Graph:
 
 	def __init__(self):
@@ -28,9 +24,10 @@ class Graph:
 		self.graph[u].append(v)
 
 	def BFS(self, s):
-		self.bfs_parent[s] = None
+		self.expandedBFS = 0
 		self.exploredBFS = 1
 
+		self.bfs_parent[s] = None
 		visited = {s: True}
 		s.level = 0
 
@@ -50,7 +47,7 @@ class Graph:
 				return self.bfs_parent
 
 			t = time.time() - start_time
-			if u is not None and (t > u.CONSTANTS.MAX_TIME or self.expandedBFS > u.CONSTANTS.MAX_NODES):
+			if t > u.CONSTANTS.MAX_TIME or self.expandedBFS > u.CONSTANTS.MAX_NODES:
 				if t > u.CONSTANTS.MAX_TIME:
 					print("%.2fs EXCEEDED TIME LIMIT of %.2fs" % (t, u.CONSTANTS.MAX_TIME))
 				else:
@@ -73,8 +70,6 @@ class Graph:
 
 	def DFS(self, start):
 		visited = {start: True}
-		# for u in listStates:
-		# 	visited[u] = False
 
 		self.dfs_parent[start] = None
 		stack = [start]
@@ -109,11 +104,6 @@ class Graph:
 					stack.append(v)
 		return []
 
-	def print(self):
-		for u in listStates:
-			print(u, end=" -> ")
-			print(self.graph[u])
-
 	def printPath(self, parentList, tail):
 		if tail is None:
 			return
@@ -134,9 +124,6 @@ class Graph:
 		while tail is not None:
 			stack.append(tail)
 			tail = parentList[tail]
-		# stack.append(tail)
 
 		while stack:
 			print(stack.pop())
-# print(g.bfs_path)
-# This code is contributed by Neelam Yadav

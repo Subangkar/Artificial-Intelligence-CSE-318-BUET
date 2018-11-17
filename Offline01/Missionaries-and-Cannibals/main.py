@@ -1,15 +1,15 @@
 #! /usr/bin/env python
-
-
 import sys
 import time
+
 from Graph import Graph
+
 from State import State, Direction, TERMINAL_STATE
+
+from Constants import CONST
 
 CON_IN = sys.stdin
 CON_OUT = sys.stdout
-
-from Constants import CONST
 
 
 def runBFS(g, INITIAL_STATE):

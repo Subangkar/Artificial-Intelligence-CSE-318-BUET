@@ -1,20 +1,4 @@
-# MAX_M = 3
-# MAX_C = 3
-# CAP_BOAT = 2
-
-# import Constants
-
-# from Constants import MAX_M
-# from Constants import MAX_C
-# from Constants import CAP_BOAT
-
-# from Constants import INITIAL_STATE
-# from Constants import TERMINAL_STATE
-
 from Constants import Direction
-
-# from Constants import TERMINAL_STATE, INITIAL_STATE
-
 
 # class CONST:
 MAX_M = 30
@@ -23,12 +7,6 @@ CAP_BOAT = 20
 CNST = None
 
 
-# MAX_M = Constants.MAX_M
-
-
-# Within this object, the state is represented as described in the lecture:
-# The triple (m,c,b) holds the number of missionaries, cannibals and boats
-# on the original shore.
 class State(object):
 
 	def __init__(self, missionaries, cannibals, dir, missionariesPassed, cannibalsPassed, level, CONSTS):
@@ -52,8 +30,6 @@ class State(object):
 			MAX_M = CONSTS.MAX_M
 			MAX_C = CONSTS.MAX_C
 			CAP_BOAT = CONSTS.CAP_BOAT
-
-	# print(MAX_M)
 
 	def successors(self):
 		listChild = []
@@ -99,13 +75,10 @@ class State(object):
 				self.cannibalsPassed > self.missionariesPassed > 0):  # more cannibals then missionaries on original shore
 			return False
 
-		# if (MAX_M==MAX_C and self.cannibals < self.missionaries < MAX_C):  # more cannibals then missionaries on other shore
-		# 	return False
-
 		return True
 
 	def isGoalState(self):
-		return self.cannibals == 0 and self.missionaries == 0 and self.dir == 0
+		return self.cannibals == 0 and self.missionaries == 0 and self.dir == Direction.NEW_TO_OLD
 
 	def __repr__(self):
 		return "\n%s\n\n< @Depth:%d State (%d, %d, %d, %d, %d) >" % (

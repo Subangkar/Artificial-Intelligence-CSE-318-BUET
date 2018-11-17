@@ -1,6 +1,8 @@
-MAX_M = 3
-MAX_C = 3
-CAP_BOAT = 2
+# MAX_M = 3
+# MAX_C = 3
+# CAP_BOAT = 2
+
+# import Constants
 
 # from Constants import MAX_M
 # from Constants import MAX_C
@@ -14,12 +16,14 @@ from Constants import Direction
 # from Constants import TERMINAL_STATE, INITIAL_STATE
 
 
-
 # class CONST:
-# 	MAX_M = 30
-# 	MAX_C = 30
-# 	CAP_BOAT = 20
+MAX_M = 30
+MAX_C = 30
+CAP_BOAT = 20
+CNST = None
 
+
+# MAX_M = Constants.MAX_M
 
 
 # Within this object, the state is represented as described in the lecture:
@@ -27,7 +31,7 @@ from Constants import Direction
 # on the original shore.
 class State(object):
 
-	def __init__(self, missionaries, cannibals, dir, missionariesPassed, cannibalsPassed, level):
+	def __init__(self, missionaries, cannibals, dir, missionariesPassed, cannibalsPassed, level, CONSTS):
 		self.missionaries = missionaries
 		self.cannibals = cannibals
 		self.dir = dir
@@ -35,6 +39,20 @@ class State(object):
 		self.level = level
 		self.missionariesPassed = missionariesPassed
 		self.cannibalsPassed = cannibalsPassed
+
+		global MAX_M
+		global MAX_C
+		global CAP_BOAT
+		global CNST
+
+		if not CONSTS is None:
+			CNST = CONSTS
+
+			MAX_M = CONSTS.MAX_M
+			MAX_C = CONSTS.MAX_C
+			CAP_BOAT = CONSTS.CAP_BOAT
+
+	# print(MAX_M)
 
 	def successors(self):
 		list = []
@@ -56,7 +74,7 @@ class State(object):
 				if 1 <= m + c <= CAP_BOAT:  # check whether action and resulting state are valid
 
 					newState = State(self.missionaries + sgn * m, self.cannibals + sgn * c, self.dir + sgn * 1,
-					                 self.missionariesPassed - sgn * m, self.cannibalsPassed - sgn * c, self.level + 1)
+					                 self.missionariesPassed - sgn * m, self.cannibalsPassed - sgn * c, self.level + 1,None)
 					if newState.isValid():
 						newState.action = " take %d missionaries and %d cannibals %s." % (m, c, direction)
 						list.append(newState)
@@ -94,5 +112,5 @@ class State(object):
 		return not (self == other)
 
 
-TERMINAL_STATE = State(-1, -1, Direction.NEW_TO_OLD, -1, -1, 0)
-INITIAL_STATE = State(MAX_M, MAX_C, Direction.OLD_TO_NEW, 0, 0,0)
+TERMINAL_STATE = State(-1, -1, Direction.NEW_TO_OLD, -1, -1, 0, CNST)
+# INITIAL_STATE = State(MAX_M, MAX_C, Direction.OLD_TO_NEW, 0, 0, 0, CNST)

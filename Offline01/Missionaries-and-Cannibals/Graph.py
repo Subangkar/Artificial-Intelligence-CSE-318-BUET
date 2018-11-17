@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 # from State import TERMINAL_STATE, INITIAL_STATE
-from State import TERMINAL_STATE, INITIAL_STATE
+from State import TERMINAL_STATE
 # from Constants import TERMINAL_STATE, INITIAL_STATE
 
 
@@ -72,8 +72,11 @@ class Graph:
 		visited = defaultdict(list)
 		for u in listStates:
 			visited[u] = False
+
 		visited[start] = True
+		self.dfs_parent[start] = None
 		stack = [start]
+
 		while stack:
 			u = stack.pop()
 			if u.isGoalState():
@@ -114,10 +117,10 @@ class Graph:
 
 		stack = []
 
-		while tail != INITIAL_STATE:
+		while tail is not None:
 			stack.append(tail)
 			tail = parentList[tail]
-		stack.append(tail)
+		# stack.append(tail)
 
 		while stack:
 			print(stack.pop())

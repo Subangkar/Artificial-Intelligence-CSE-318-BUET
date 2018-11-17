@@ -1,8 +1,15 @@
-# class CONST:
+class Direction:
+	OLD_TO_NEW = 1
+	NEW_TO_OLD = 0
 
-MAX_M = 30
-MAX_C = 30
-CAP_BOAT = 20
+
+
+class CONST:
+	def __init__(self,MAX_M,MAX_C,CAP_BOAT):
+		self.MAX_M=MAX_M
+		self.MAX_C=MAX_C
+		self.CAP_BOAT=CAP_BOAT
+
 
 
 # TERMINAL_STATE = None
@@ -10,6 +17,3 @@ CAP_BOAT = 20
 # INITIAL_STATE = None
 # #	State(MAX_M, MAX_C, Direction.OLD_TO_NEW, 0, 0,0)
 
-class Direction:
-	OLD_TO_NEW = 1
-	NEW_TO_OLD = 0

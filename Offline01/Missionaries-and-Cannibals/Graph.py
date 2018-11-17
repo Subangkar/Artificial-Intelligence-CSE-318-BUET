@@ -55,7 +55,7 @@ class Graph:
 				queue.clear()
 				return []
 
-			for v in u.successors():
+			for v in u.successors(False):
 				if (v.missionaries, v.cannibals, v.dir) not in visited.keys():
 					self.bfs_parent[v] = u
 					v.level = u.level + 1
@@ -93,7 +93,7 @@ class Graph:
 				stack.clear()
 				return []
 
-			for v in u.successors():
+			for v in u.successors(True):
 				if (v.missionaries, v.cannibals, v.dir) not in visited.keys():
 					visited[(v.missionaries, v.cannibals, v.dir)] = True
 					self.dfs_parent[v] = u

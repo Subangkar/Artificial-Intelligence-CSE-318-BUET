@@ -36,6 +36,7 @@ def generateGraph(g):
 
 
 def runBFS(g, INITIAL_STATE):
+	sys.stdout = open("outBFS.txt", "w")
 	print(">>>>>>>>>>>\n\nBFS\n")
 	start_time = time.time_ns()
 	p = g.BFS(INITIAL_STATE)
@@ -48,8 +49,8 @@ def runBFS(g, INITIAL_STATE):
 
 
 def runDFS(g, INITIAL_STATE):
+	sys.stdout = open("outDFS.txt", "w")
 	print(">>>>>>>>>>>\n\nDFS\n")
-
 	start_time = time.time_ns()
 	p = g.DFS(INITIAL_STATE)
 	if len(p):
@@ -60,13 +61,22 @@ def runDFS(g, INITIAL_STATE):
 
 
 def main():
+	sys.stdin = open("in.txt", "r")
+
 	m = int(input("m="))
+	print(m, end="\n")
 	c = int(input("c="))
+	print(c, end="\n")
 	k = int(input("k="))
+	print(k, end="\n")
+	t = int(input("TIME_LIMIT_s="))
+	print(t, end="\n")
+	n = int(input("NODE_LIMIT="))
+	print(n, end="\n")
 
-	sys.stdout = open("out.txt", "w")
+	# sys.stdout = open("out.txt", "w")
 
-	CNST = CONST(m, c, k)
+	CNST = CONST(m, c, k, t, n)
 
 	INITIAL_STATE = State(CNST.MAX_M, CNST.MAX_C, Direction.OLD_TO_NEW, 0, 0, 0, CNST)
 	# TERMINAL_STATE = State(-1, -1, Direction.NEW_TO_OLD, -1, -1, 0)

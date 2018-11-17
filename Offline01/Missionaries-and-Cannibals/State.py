@@ -39,6 +39,7 @@ class State(object):
 		self.level = level
 		self.missionariesPassed = missionariesPassed
 		self.cannibalsPassed = cannibalsPassed
+		self.CONSTANTS = CONSTS
 
 		global MAX_M
 		global MAX_C
@@ -55,11 +56,11 @@ class State(object):
 	# print(MAX_M)
 
 	def successors(self):
-		list = []
+		listChild = []
 		if not self.isValid() or self.isGoalState():
 			# print("?? ", end=" ")
 			# print(self)
-			return list
+			return listChild
 		if self.dir == Direction.OLD_TO_NEW:
 			sgn = -1
 			direction = "from the original shore to the new shore"
@@ -69,7 +70,8 @@ class State(object):
 		for m in range(CAP_BOAT + 1):
 			for c in range(CAP_BOAT + 1):
 				# no point of taking only one from old to new shore when other exists --need to think @not sure
-				if (self.dir == Direction.OLD_TO_NEW and m + c < 2) and (self.missionaries != 0 and self.cannibals != 0):
+				if (self.dir == Direction.OLD_TO_NEW and m + c < 2) and (
+						self.missionaries != 0 and self.cannibals != 0):
 					continue
 
 				# missionaries < cannibals on boat
@@ -79,23 +81,27 @@ class State(object):
 				if 1 <= m + c <= CAP_BOAT:  # check whether action and resulting state are valid
 
 					newState = State(self.missionaries + sgn * m, self.cannibals + sgn * c, self.dir + sgn * 1,
-					                 self.missionariesPassed - sgn * m, self.cannibalsPassed - sgn * c, self.level + 1,None)
+					                 self.missionariesPassed - sgn * m, self.cannibalsPassed - sgn * c, self.level + 1,
+					                 self.CONSTANTS)
 					if newState.isValid():
 						newState.action = " take %d missionaries and %d cannibals %s." % (m, c, direction)
-						list.append(newState)
-		return list
+						listChild.append(newState)
+		return listChild
 
 	def isValid(self):
 		# obvious
 		if self.missionaries < 0 or self.cannibals < 0 or self.missionaries > MAX_M or self.cannibals > MAX_C or (
 				self.dir != 0 and self.dir != 1):
 			return False
+
 		# then check whether missionaries outnumbered by cannibals
 		if (self.cannibals > self.missionaries > 0) or (
 				self.cannibalsPassed > self.missionariesPassed > 0):  # more cannibals then missionaries on original shore
 			return False
+
 		# if (MAX_M==MAX_C and self.cannibals < self.missionaries < MAX_C):  # more cannibals then missionaries on other shore
 		# 	return False
+
 		return True
 
 	def isGoalState(self):

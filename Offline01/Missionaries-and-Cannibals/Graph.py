@@ -9,23 +9,14 @@ class Graph:
 
 	def __init__(self):
 
-		# default dictionary to store graph
-		self.expandedDFS = 0
-		self.bfs_path = None
-		self.graph = defaultdict(list)
 		self.bfs_parent = {}
 		self.dfs_parent = {}
-		self.expandedBFS = 0
-		self.exploredBFS = 0
 
-	def addEdge(self, u, v):
-		if not u in self.graph.keys():
-			self.graph[u] = []
-		self.graph[u].append(v)
+		self.expandedBFS = 0
+		self.expandedDFS = 0
 
 	def BFS(self, s):
 		self.expandedBFS = 0
-
 		self.bfs_parent[s] = None
 		visited = {(s.missionaries, s.cannibals, s.dir): True}
 		s.level = 0
@@ -53,7 +44,7 @@ class Graph:
 				print("No of Expanded Nodes: " + str(self.expandedBFS))
 				print("No of Explored Nodes: " + str(visited.__len__()))
 				queue.clear()
-				return []
+				return {}
 
 			for v in u.successors():
 				if (v.missionaries, v.cannibals, v.dir) not in visited.keys():
@@ -62,10 +53,10 @@ class Graph:
 					queue.append(v)
 					visited[(v.missionaries, v.cannibals, v.dir)] = True
 
-		self.bfs_parent = {}
-		return []
+		return {}
 
 	def DFS(self, s):
+		self.expandedDFS = 0
 		self.dfs_parent[s] = None
 		visited = {(s.missionaries, s.cannibals, s.dir): True}
 
@@ -91,24 +82,16 @@ class Graph:
 				print("No of Expanded Nodes: " + str(self.expandedDFS))
 				print("No of Explored Nodes: " + str(visited.__len__()))
 				stack.clear()
-				return []
+				return {}
 
 			for v in u.successors():
 				if (v.missionaries, v.cannibals, v.dir) not in visited.keys():
 					visited[(v.missionaries, v.cannibals, v.dir)] = True
 					self.dfs_parent[v] = u
 					stack.append(v)
-		return []
+		return {}
 
 	def printPath(self, parentList, tail):
-		if tail is None:
-			return
-		if parentList == {} or parentList is None:  # tail not in parentList.keys():
-			return
-		self.printPath(parentList, parentList[tail])
-		if tail != TERMINAL_STATE: print(tail)
-
-	def printPathL(self, parentList, tail):
 		if tail is None:
 			return
 		if parentList == {} or parentList is None:  # tail not in parentList.keys():

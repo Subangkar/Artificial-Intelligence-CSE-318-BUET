@@ -20,7 +20,7 @@ def runBFS(g, INITIAL_STATE):
 	end_time = time.time_ns()
 	# print(p)
 	if len(p):
-		g.printPathL(p, TERMINAL_STATE)
+		g.printPath(p, TERMINAL_STATE)
 	else:
 		print("No Solution")
 	print("\n Elapsed time in BFS: %.2fms" % ((end_time - start_time) / (10 ** 6)))
@@ -33,7 +33,7 @@ def runDFS(g, INITIAL_STATE):
 	p = g.DFS(INITIAL_STATE)
 	end_time = time.time_ns()
 	if len(p):
-		g.printPathL(p, TERMINAL_STATE)
+		g.printPath(p, TERMINAL_STATE)
 	else:
 		print("No Solution")
 	print("\n Elapsed time in DFS: %.2fms" % ((end_time - start_time) / (10 ** 6)))

@@ -35,8 +35,6 @@ class State(object):
 	def successors(self):
 		listChild = []
 		if not self.isValid() or self.isGoalState():
-			# print("?? ", end=" ")
-			# print(self)
 			return listChild
 		if self.dir == Direction.OLD_TO_NEW:
 			sgn = -1

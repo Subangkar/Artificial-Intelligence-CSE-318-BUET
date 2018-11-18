@@ -32,7 +32,7 @@ class State(object):
 			CAP_BOAT = CONSTS.CAP_BOAT
 
 	# pass True to count forward
-	def successors(self, fw=True):
+	def successors(self):
 		listChild = []
 		if not self.isValid() or self.isGoalState():
 			# print("?? ", end=" ")
@@ -46,28 +46,22 @@ class State(object):
 			direction = "back from the new shore to the original shore"
 		# min ensures that we never increase no of jointly m,c in the old shore
 		# if we brought back more m and c than already in here it'll be pointless @not sure -- Not Works
-		if fw:
-			for m in range(CAP_BOAT + 1):
-				for c in range(CAP_BOAT + 1):
-					self.addValidSuccessors(listChild, m, c, sgn, direction)
-		else:
-			for m in range(CAP_BOAT, 0, -1):
-				for c in range(CAP_BOAT, 0, -1):
-					self.addValidSuccessors(listChild, m, c, sgn, direction)
+		for m in range(CAP_BOAT + 1):
+			for c in range(CAP_BOAT + 1):
+				self.addValidSuccessors(listChild, m, c, sgn, direction)
 		return listChild
 
 	def addValidSuccessors(self, listChild, m, c, sgn, direction):
 		# no point of taking only one from old to new shore when other exists --need to think @not sure
-		if (self.dir == Direction.OLD_TO_NEW and m + c < 2) and (
-				self.missionaries != 0 and self.cannibals != 0):
-			return
+		# if (self.dir == Direction.OLD_TO_NEW and m + c < 2) and (
+		# 		self.missionaries != 0 and self.cannibals != 0):
+		# 	return
 
 		# missionaries < cannibals on boat
 		if 0 < m < c:
 			return
 
-		if 1 <= m + c <= CAP_BOAT:  # check whether action and resulting state are valid
-
+		if 1 <= m + c <= CAP_BOAT:
 			newState = State(self.missionaries + sgn * m, self.cannibals + sgn * c, self.dir + sgn * 1,
 			                 self.missionariesPassed - sgn * m, self.cannibalsPassed - sgn * c, self.level + 1,
 			                 self.CONSTANTS)

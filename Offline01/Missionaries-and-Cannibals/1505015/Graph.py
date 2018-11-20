@@ -46,7 +46,7 @@ class Graph:
 				queue.clear()
 				return {}
 
-			for v in u.successors():
+			for v in reversed(u.successors()):
 				if (v.missionaries, v.cannibals, v.dir) not in visited.keys():
 					self.bfs_parent[v] = u
 					v.level = u.level + 1

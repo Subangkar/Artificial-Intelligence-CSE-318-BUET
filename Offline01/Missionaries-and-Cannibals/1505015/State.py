@@ -9,7 +9,7 @@ CNST = None
 
 class State(object):
 
-	def __init__(self, missionaries, cannibals, dir, missionariesPassed, cannibalsPassed, level, CONSTS):
+	def __init__(self, missionaries, cannibals, dir, missionariesPassed, cannibalsPassed, level, CONSTS,moves):
 		self.missionaries = missionaries
 		self.cannibals = cannibals
 		self.dir = dir
@@ -18,6 +18,8 @@ class State(object):
 		self.missionariesPassed = missionariesPassed
 		self.cannibalsPassed = cannibalsPassed
 		self.CONSTANTS = CONSTS
+
+		self.moves = moves
 
 		global MAX_M
 		global MAX_C
@@ -44,9 +46,12 @@ class State(object):
 			direction = "back from the new shore to the original shore"
 		# min ensures that we never increase no of jointly m,c in the old shore
 		# if we brought back more m and c than already in here it'll be pointless @not sure -- Not Works
-		for m in range(CAP_BOAT + 1):
-			for c in range(CAP_BOAT + 1):
-				self.addValidSuccessors(listChild, m, c, sgn, direction)
+		# for m in range(CAP_BOAT + 1):
+		# 	for c in range(CAP_BOAT + 1):
+		# 		self.addValidSuccessors(listChild, m, c, sgn, direction)
+		for i in self.moves:
+			(m, c) = i
+			self.addValidSuccessors(listChild, m, c, sgn, direction)
 		return listChild
 
 	def addValidSuccessors(self, listChild, m, c, sgn, direction):
@@ -56,13 +61,13 @@ class State(object):
 		# 	return
 
 		# missionaries < cannibals on boat
-		if 0 < m < c:
-			return
+		# if 0 < m < c:
+		# 	return
 
-		if 1 <= m + c <= CAP_BOAT:
+		# if 1 <= m + c <= CAP_BOAT:
 			newState = State(self.missionaries + sgn * m, self.cannibals + sgn * c, self.dir + sgn * 1,
 			                 self.missionariesPassed - sgn * m, self.cannibalsPassed - sgn * c, self.level + 1,
-			                 self.CONSTANTS)
+			                 self.CONSTANTS,self.moves)
 			if newState.isValid():
 				newState.action = " take %d missionaries and %d cannibals %s." % (m, c, direction)
 				listChild.append(newState)
@@ -98,5 +103,5 @@ class State(object):
 		return not (self == other)
 
 
-TERMINAL_STATE = State(-1, -1, Direction.NEW_TO_OLD, -1, -1, 0, CNST)
+TERMINAL_STATE = State(-1, -1, Direction.NEW_TO_OLD, -1, -1, 0, CNST,None)
 # INITIAL_STATE = State(MAX_M, MAX_C, Direction.OLD_TO_NEW, 0, 0, 0, CNST)

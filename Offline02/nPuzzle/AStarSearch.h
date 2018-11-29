@@ -8,7 +8,7 @@
 
 #include "Node.h"
 
-class aStarSearch{
+class aStarSearch {
 public:
 	map<Node, bool> visited;
 	map<Node, double> cost;
@@ -21,15 +21,19 @@ public:
 
 	double MIsplaced(Node a, Node b) {
 		double Ans = 0;
-		for (int i = 0; i < Node::boardSqSize; i++) for (int j = 0; j < Node::boardSqSize; j++) if (a.A[i][j] && a.A[i][j] != b.A[i][j]) Ans++;
+		for (int i = 0; i < Node::boardSqSize; i++)
+			for (int j = 0; j < Node::boardSqSize; j++)
+				if (a.A[i][j] && a.A[i][j] != b.A[i][j])Ans++;
 		return Ans;
 	}
 
 	double ManHattan(Node a, Node b) {
 		double Ans = 0;
-		int pX[10];
-		int pY[10];
-		for (int i = 0; i < Node::boardSqSize; i++) for (int j = 0; j < Node::boardSqSize; j++) pX[a.A[i][j]] = i, pY[a.A[i][j]] = j;
+		int pX[(Node::boardSqSize * Node::boardSqSize) + 1];
+		int pY[(Node::boardSqSize * Node::boardSqSize) + 1];
+		for (int i = 0; i < Node::boardSqSize; i++)
+			for (int j = 0; j < Node::boardSqSize; j++)
+				pX[a.A[i][j]] = i, pY[a.A[i][j]] = j;
 		for (int i = 0; i < Node::boardSqSize; i++)
 			for (int j = 0; j < Node::boardSqSize; j++)
 				if (b.A[i][j])
@@ -39,9 +43,11 @@ public:
 
 	double Euclidean(Node a, Node b) {
 		double Ans = 0;
-		int pX[10];
-		int pY[10];
-		for (int i = 0; i < Node::boardSqSize; i++) for (int j = 0; j < Node::boardSqSize; j++) pX[a.A[i][j]] = i, pY[a.A[i][j]] = j;
+		int pX[(Node::boardSqSize * Node::boardSqSize) + 1];
+		int pY[(Node::boardSqSize * Node::boardSqSize) + 1];
+		for (int i = 0; i < Node::boardSqSize; i++)
+			for (int j = 0; j < Node::boardSqSize; j++)
+				pX[a.A[i][j]] = i, pY[a.A[i][j]] = j;
 		for (int i = 0; i < Node::boardSqSize; i++)
 			for (int j = 0; j < Node::boardSqSize; j++)
 				if (b.A[i][j])
@@ -51,9 +57,11 @@ public:
 
 	double OutOfRowColumn(Node a, Node b) {
 		double Ans = 0;
-		int pX[10];
-		int pY[10];
-		for (int i = 0; i < Node::boardSqSize; i++) for (int j = 0; j < Node::boardSqSize; j++) pX[a.A[i][j]] = i, pY[a.A[i][j]] = j;
+		int pX[(Node::boardSqSize * Node::boardSqSize) + 1];
+		int pY[(Node::boardSqSize * Node::boardSqSize) + 1];
+		for (int i = 0; i < Node::boardSqSize; i++)
+			for (int j = 0; j < Node::boardSqSize; j++)
+				pX[a.A[i][j]] = i, pY[a.A[i][j]] = j;
 		for (int i = 0; i < Node::boardSqSize; i++)
 			for (int j = 0; j < Node::boardSqSize; j++)
 				if (b.A[i][j])
@@ -62,23 +70,27 @@ public:
 	}
 
 	double nMaxSwap(Node a, const Node &b) {
-		int P[10];
-		int B[10];
-		for (int i = 0; i < Node::boardSqSize; i++) for (int j = 0; j < Node::boardSqSize; j++) P[i * 3 + j] = a.A[i][j];
+		int P[(Node::boardSqSize * Node::boardSqSize) + 1];
+		int B[(Node::boardSqSize * Node::boardSqSize) + 1];
+		for (int i = 0; i < Node::boardSqSize; i++)
+			for (int j = 0; j < Node::boardSqSize; j++)
+				P[i * 3 + j] = a.A[i][j];
 		for (int i = 0; i < 9; i++) B[P[i]] = i;
 
 		double Ans = 0;
+		// problem here
 		while (P[B[0]] != P[B[B[0]]]) {
 			Ans++;
 			swap(P[B[0]], P[B[B[0]]]);
 			swap(B[0], B[B[0]]);
 		}
+		cout << "Ok" << endl;
 		return Ans;
 	}
 
-	int HType;
+	int HType = 2;
 
-	double Heuristic(const Node &a, Node b) {
+	double Heuristic(const Node &a, const Node &b) {
 		if (HType == 1) return MIsplaced(a, b);
 		else if (HType == 2) return ManHattan(a, b);
 		else if (HType == 3) return Euclidean(a, b);
@@ -92,14 +104,15 @@ public:
 		visited[Start] = true;
 		cost[Start] = 0;
 		parent[Start] = Start;
-
 		while (!pq.empty()) {
 			Node u = pq.top().second;
 			pq.pop();
 			if (u == Goal) break;
 
 			int zX = 0, zY = 0;
-			for (int i = 0; i < Node::boardSqSize; i++) for (int j = 0; j < Node::boardSqSize; j++) if (u.A[i][j] == ZERO) zX = i, zY = j;
+			for (int i = 0; i < Node::boardSqSize; i++)
+				for (int j = 0; j < Node::boardSqSize; j++)
+					if (u.A[i][j] == ZERO)zX = i, zY = j;
 
 			for (int Mov = 0; Mov < 4; Mov++) {
 				int xx = zX + dirX[Mov];
@@ -117,6 +130,7 @@ public:
 					}
 				}
 			}
+
 		}
 	}
 

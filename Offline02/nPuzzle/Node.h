@@ -8,6 +8,7 @@
 
 //#include<bits/stdc++.h>
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <map>
@@ -106,12 +107,25 @@ public:
 				else
 					blank_row_no = i;
 			}
-
-		if ((boardSqSize % 2) && (getInvCount(arr) % 2))
-			return false;
-		else if ((boardSqSize % 2) == 0 && ((blank_row_no + getInvCount(arr)) % 2) == 0)
-			return false;
-		return true;
+		int invCount = getInvCount(arr);
+		bool boardSizeOdd = static_cast<bool>(boardSqSize & 1);
+//		cout << boardSizeOdd << " " << blank_row_no << " " << invCount << endl;
+		if (boardSizeOdd && !(invCount & 1)) // odd-board & even-inversions
+			return true;
+//		else if (!boardSizeOdd && ((blank_row_no + getInvCount(arr)) % 2) == 0) // even-board &
+//			return false;
+//		return true;
+		else {
+			int pos = findEmptyPosition();
+//			return (pos & 1) != 0 == !(invCount & 1);
+			if (pos & 1)
+				return !(invCount & 1);
+			else
+				return invCount & 1;
+		}
+		//If N is even, puzzle instance is solvable if
+		//the blank is on an even row counting from the bottom (second-last, fourth-last, etc.) and number of inversions is odd.
+		//the blank is on an odd row counting from the bottom (last, third-last, fifth-last, etc.) and number of inversions is even.
 	}
 
 
@@ -125,6 +139,15 @@ public:
 		return inv_count;
 	}
 
+	int findEmptyPosition() // from bottom right corner
+	{
+		// start from bottom-right corner of matrix
+		for (int i = Node::boardSqSize - 1; i >= 0; i--)
+			for (int j = Node::boardSqSize - 1; j >= 0; j--)
+				if (A[i][j] == 0)
+					return Node::boardSqSize - i;
+	}
+
 };
 
 int Node::boardSqSize = 0;
@@ -133,7 +156,7 @@ ostream &operator<<(ostream &os, const Node &node) {
 	if (!node.A) return os;
 	for (int i = 0; i < Node::boardSqSize; i++) {
 		for (int j = 0; j < Node::boardSqSize; j++)
-			os << node.A[i][j] << " ";
+			os << setw(2) << node.A[i][j] << " ";
 		os << endl;
 	}
 	os << " ---------" << std::endl;

@@ -31,6 +31,7 @@ void executeSearch(const Node &Start, const Node &Goal, int heuristic, bool prin
 	cout << "No of Steps: " << (int) starSearch->visited[Goal].cost_ << endl;
 	cout << "No of Nodes Expanded: " << nExpanded << endl;
 	cout << "No of Nodes Opened: " << starSearch->openedCount << endl;
+	cout << "Max Depth Reached: " << starSearch->max_depth << endl;
 	cout << "Execution Time: " << chrono::duration<double, milli>(diff).count() << "ms" << endl;
 	cout << endl;
 
@@ -48,13 +49,14 @@ int main() {
 	Node Goal;
 	for (int i = 0; i < boardSqSize; i++)
 		for (int j = 0; j < boardSqSize; j++)
-			Goal.A[i][j] = i * Node::boardSqSize + j + 1;
+			Goal.A[i][j] = static_cast<puzzle_t>(i * Node::boardSqSize + j + 1);
 	Goal.A[Node::boardSqSize - 1][Node::boardSqSize - 1] = 0;
 
 	Node Start;
+	int x;
 	for (int i = 0; i < boardSqSize; i++)
 		for (int j = 0; j < boardSqSize; j++)
-			cin >> Start.A[i][j];
+			cin >> x, Start.A[i][j] = static_cast<puzzle_t>(x);
 
 	cout << "Start: \n" << Start;
 	cout << "Goal: \n" << Goal;
@@ -73,7 +75,7 @@ int main() {
 			executeSearch(Start, Goal, LINEAR_CONFLICT, false);
 
 //			cout << "#Hamming Distance Heuristics: " << endl;
-//			executeSearch(Start, Goal, HAMMING_DISTANCE,false);
+//			executeSearch(Start, Goal, HAMMING_DISTANCE, false);
 		}
 	}
 }

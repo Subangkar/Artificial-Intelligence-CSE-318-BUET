@@ -25,6 +25,7 @@
 #define UP 3
 
 typedef int direction_t;
+typedef int8_t puzzle_t;
 
 using namespace std;
 
@@ -35,7 +36,7 @@ int dirY[4] = {1, -1, 0, 0}; // UP-DOWN-RIGHT-LEFT
 
 class Node {
 public:
-	int **A = nullptr;
+	puzzle_t **A = nullptr;
 	bool emptyNode = true;
 	static int boardSqSize;
 
@@ -43,9 +44,9 @@ public:
 
 	Node() {
 		emptyNode = true;
-		A = new int *[boardSqSize];
+		A = new puzzle_t *[boardSqSize];
 		for (int i = 0; i < boardSqSize; ++i) {
-			A[i] = new int[boardSqSize];
+			A[i] = new puzzle_t[boardSqSize];
 			memset(A[i], 0, boardSqSize * sizeof(A[0][0]));
 		}
 	}
@@ -55,9 +56,9 @@ public:
 		this->~Node();
 //		emptyNode = false;
 		this->emptyNode = node.emptyNode;
-		A = new int *[boardSqSize];
+		A = new puzzle_t *[boardSqSize];
 		for (int i = 0; i < boardSqSize; ++i) {
-			A[i] = new int[boardSqSize];
+			A[i] = new puzzle_t[boardSqSize];
 		}
 		for (int i = 0; i < boardSqSize; i++) {
 			for (int j = 0; j < boardSqSize; j++) {
@@ -69,9 +70,9 @@ public:
 	Node &operator=(const Node &node) {
 		this->~Node();
 		this->emptyNode = node.emptyNode;
-		A = new int *[boardSqSize];
+		A = new puzzle_t *[boardSqSize];
 		for (int i = 0; i < boardSqSize; ++i) {
-			A[i] = new int[boardSqSize];
+			A[i] = new puzzle_t[boardSqSize];
 		}
 		for (int i = 0; i < boardSqSize; i++) {
 			for (int j = 0; j < boardSqSize; j++) {
@@ -205,7 +206,7 @@ ostream &operator<<(ostream &os, const Node &node) {
 	for (int i = 0; i < Node::boardSqSize; i++) {
 		for (int j = 0; j < Node::boardSqSize; j++)
 			if (node.A[i][j])
-				os << setw(PRINT_W) << node.A[i][j] << " ";
+				os << setw(PRINT_W) << (static_cast<int>(node.A[i][j])) << " ";
 			else
 				os << setw(PRINT_W) << "  " << " ";
 		os << endl;

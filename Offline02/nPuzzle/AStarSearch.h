@@ -7,19 +7,19 @@
 
 #ifndef NPUZZLE_ASTARSEARCH_H
 #define NPUZZLE_ASTARSEARCH_H
-#define ZERO 0
 
 #define MANHATTAN_DISTANCE 1
 #define HAMMING_DISTANCE 2
 #define LINEAR_CONFLICT 3
 
-#define LIMIT_DEPTH 48
+#define LIMIT_DEPTH 60
+#define NODE_LIMIT 10000000
 
 #define cost_ first
 #define parent_ second
 
 
-typedef double cost_t;
+typedef int cost_t;
 typedef int parent_t;
 
 
@@ -28,6 +28,7 @@ public:
 	map<Node, pair<cost_t, parent_t>> visited;//
 
 	size_t openedCount;
+	int max_depth;
 
 	int heuristicType = NULL;
 
@@ -43,12 +44,12 @@ public:
 
 	static double ManHattan(const Node &a, const Node &b) {
 		int sum = 0;
-		int pR[(Node::boardSqSize * Node::boardSqSize) + 1];
-		int pC[(Node::boardSqSize * Node::boardSqSize) + 1];
+		puzzle_t pR[(Node::boardSqSize * Node::boardSqSize) + 1];
+		puzzle_t pC[(Node::boardSqSize * Node::boardSqSize) + 1];
 		for (int r = 0; r < Node::boardSqSize; r++) {
 			for (int c = 0; c < Node::boardSqSize; c++) {
-				pR[a.A[r][c]] = r;
-				pC[a.A[r][c]] = c;
+				pR[a.A[r][c]] = static_cast<puzzle_t>(r);
+				pC[a.A[r][c]] = static_cast<puzzle_t>(c);
 			}
 		}
 		for (int r = 0; r < Node::boardSqSize; r++)
@@ -60,12 +61,12 @@ public:
 
 	static double nLinearConflicts(const Node &a, const Node &b) {
 		int conflicts = 0;
-		int pR[(Node::boardSqSize * Node::boardSqSize) + 1];
-		int pC[(Node::boardSqSize * Node::boardSqSize) + 1];
+		puzzle_t pR[(Node::boardSqSize * Node::boardSqSize) + 1];
+		puzzle_t pC[(Node::boardSqSize * Node::boardSqSize) + 1];
 		for (int r = 0; r < Node::boardSqSize; r++) {
 			for (int c = 0; c < Node::boardSqSize; c++) {
-				pR[a.A[r][c]] = r;
-				pC[a.A[r][c]] = c;
+				pR[a.A[r][c]] = static_cast<puzzle_t>(r);
+				pC[a.A[r][c]] = static_cast<puzzle_t>(c);
 			}
 		}
 
@@ -113,6 +114,7 @@ public:
 
 	int AStarSearch(Node Start, const Node &Goal) {
 		int nExpanded = 0;
+		max_depth = 0;
 
 		priority_queue<pair<double, Node> > openList;
 		openList.push({0, Start});
@@ -123,12 +125,20 @@ public:
 			openList.pop();
 			++nExpanded;
 
+			max_depth = max(max_depth, visited[u].cost_);
+
 			if (u == Goal) {
 				break;
 			}
 
 			if (visited[u].cost_ > LIMIT_DEPTH) {
 				cout << "Height limit Exceeded @" << endl << u;
+				break;
+			}
+
+
+			if (visited.size() > NODE_LIMIT) {
+				cout << "Node limit Exceeded @" << endl << u;
 				break;
 			}
 
@@ -148,7 +158,7 @@ public:
 					double newCost = visited[u].cost_ + 1;
 
 					if (visited.find(v) == visited.end() ||
-					    newCost < visited[u].cost_) { //2nd condition might not be needed
+					    newCost < visited[v].cost_) { //2nd condition might not be needed
 
 						visited[v] = {newCost, Node::oppositeDirection(dir)};
 						double Priority = newCost + Heuristic(v, Goal);

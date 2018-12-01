@@ -27,8 +27,10 @@
 //}
 
 #include <bits/stdc++.h>
-int getInvCount(int arr[], int n)
-{
+
+using namespace std;
+
+int getInvCount(int arr[], int n) {
 	int inv_count = 0;
 	for (int i = 0; i < n - 1; i++)
 		for (int j = i + 1; j < n; j++)
@@ -38,11 +40,99 @@ int getInvCount(int arr[], int n)
 	return inv_count;
 }
 
-/* Driver progra to test above functions */
-int main(int argv, char** args)
+
+struct S {
+	int x;
+	int y;
+
+	bool operator<(const S &right) const {
+		return x < right.x && y < right.y;
+	}
+
+	bool operator==(const S &rhs) const {
+		return x == rhs.x &&
+		       y == rhs.y;
+	}
+
+	bool operator!=(const S &rhs) const {
+		return !(rhs == *this);
+	}
+
+};
+
+//struct CustomCompare {
+//	bool operator()(const pair<double, S> &lhs, const pair<double, S> &rhs) const {
+//		return lhs.first < rhs.second;
+//	}
+//};
+
+class ads{
+public:
+	double k;
+	S val;
+
+	bool operator==(const ads &rhs) const {
+		return val == rhs.val;
+	}
+
+	bool operator!=(const ads &rhs) const {
+		return !(rhs == *this);
+	}
+
+	bool operator<(const ads &rhs) const {
+//		if (val < rhs.val)
+//			return true;
+//		if (rhs.k < k)
+//			return false;
+		return val < rhs.val;
+	}
+
+	bool operator>(const ads &rhs) const {
+		return rhs < *this;
+	}
+
+	bool operator<=(const ads &rhs) const {
+		return !(rhs < *this);
+	}
+
+	bool operator>=(const ads &rhs) const {
+		return !(*this < rhs);
+	}
+};
+
+struct Comparator
 {
-	int arr[] = { 9,1,10,5,14, 8, 13, 3,2, 6, 12,15, 4, 11, 7 };
-	int n = sizeof(arr) / sizeof(arr[0]);
-	printf(" Number of inversions are %d \n", getInvCount(arr, n));
+	bool operator() (const ads& lhs,
+	                 const ads& rhs) const
+	{
+		if (lhs.k == rhs.k)
+			return lhs.val < rhs.val;
+		else
+			return lhs.k < rhs.k;
+	}
+};
+
+/* Driver progra to test above functions */
+int main(int argv, char **args) {
+//	priority_queue<pair<double,S>,CustomCompare> pq;
+	set<ads,Comparator> pq;
+	set<ads,Comparator>::iterator it;
+	pq.insert({2.3, {3, 4}});
+	pq.insert({2, {5, 7}});
+	pq.insert({5.0, {3, 4}});
+	pq.erase({1,{3,4}});
+//	pq.find({1,{3,4}})->k=1;
+//	pq.insert({1,{3,4}});
+//	pq.erase()
+//	pq.insert()
+
+//	while (!pq.empty()) {
+//		cout << pq.begin()->first << endl;
+////		pq.pop();
+//	}
+	for (it = pq.begin(); it != pq.end(); ++it) {
+		cout << it->k << endl;
+	}
+
 	return 0;
 }

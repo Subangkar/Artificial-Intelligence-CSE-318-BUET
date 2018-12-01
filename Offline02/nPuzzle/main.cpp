@@ -4,6 +4,32 @@
 #define MAX 105
 
 
+void printSolution(aStarSearch &starSearch, Node &Start, Node &Goal) {
+	Node now = Goal;
+
+	//print soln
+	vector<Node> Path;
+	while (!(starSearch.parent[now] == now)) {
+		Path.push_back(now);
+		now = starSearch.parent[now];
+	}
+	Path.push_back(Start);
+	reverse(Path.begin(), Path.end());
+	for (auto &i : Path) cout << i;
+}
+
+void executeSearch(Node &Start, Node &Goal, int heuristic, bool printSol = true) {
+	aStarSearch starSearch;
+	starSearch.setHeuristic(heuristic);
+	int nExpanded = starSearch.AStarSearch(Start, Goal);
+	cout << "No of Steps: " << (int) starSearch.cost[Goal] << endl;
+	cout << "No of Nodes Expanded: " << nExpanded << endl;
+	cout << "No of Nodes Opened: " << starSearch.visited.size() << endl;
+	cout << endl;
+
+	if (printSol) printSolution(starSearch, Start, Goal);
+}
+
 int main() {
 	freopen("in.txt", "r", stdin);
 	freopen("out.txt", "w", stdout);
@@ -20,34 +46,25 @@ int main() {
 		for (int j = 0; j < boardSqSize; j++) {
 			cin >> Start.A[i][j];
 		}
-	cout << Goal;
-	cout << Start;
+//	cout << Goal;
+//	cout << Start;
 //	cout << aStarSearch::ManHattan(Start, Goal) << endl;
 //	cout << aStarSearch::HammingDistance(Start, Goal) << endl;
-	cout << aStarSearch::nLinearConflicts(Start, Goal) << endl;
+//	cout << aStarSearch::nLinearConflicts(Start, Goal) << endl;
 
 	if (!Start.isSolveAble()) {
 		cout << "No Solution" << endl;
 	} else {
-		aStarSearch starSearch;
-		starSearch.setHeuristic(LINEAR_CONFLICT);
-		int nExpanded = starSearch.AStarSearch(Start, Goal);
-		Node now = Goal;
+		{
+			cout << "#ManHattan Distance Heuristics: " << endl;
+			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
 
-		cout << "No of Steps: " << (int) starSearch.cost[Goal] << endl;
-		cout << "No of Nodes Expanded: " << nExpanded << endl;
-		cout << "No of Nodes Opened: " << starSearch.visited.size() << endl;
-		cout << endl;
+			cout << "#Hamming Distance Heuristics: " << endl;
+			executeSearch(Start, Goal, HAMMING_DISTANCE,false);
 
-		//print soln
-		vector<Node> Path;
-		while (!(starSearch.parent[now] == now)) {
-			Path.push_back(now);
-			now = starSearch.parent[now];
+			cout << "#Linear Conflicts Heuristics: " << endl;
+			executeSearch(Start, Goal, LINEAR_CONFLICT,false);
 		}
-		Path.push_back(Start);
-		reverse(Path.begin(), Path.end());
-		for (auto &i : Path) cout << i;
 	}
 }
 

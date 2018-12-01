@@ -15,13 +15,20 @@
 
 #define LIMIT_DEPTH 48
 
+#define cost_ first
+#define parent_ second
+
+
+typedef double cost_t;
+typedef int parent_t;
 
 class aStarSearch {
 public:
 //	map<Node, bool> visited;
-	map<Node, double> cost;
-//	map<Node, Node> parent;
-	map<Node, int> parent;
+//	map<Node, double> cost_;
+//	map<Node, Node> parent_;
+//	map<Node, int> parent_;
+	map<Node, pair<cost_t, parent_t>> visited;//
 
 	size_t openedCount;
 
@@ -111,14 +118,13 @@ public:
 		int nExpanded = 0;
 
 		priority_queue<pair<double, Node> > openList;
-//		map<Node,pair<double,int>> visited;//
 //		map<Node, bool> visited;
-		set<Node> visited;
+//		set<Node> visited;
 		openList.push({0, Start});
 //		visited[Start] = true;
-		visited.insert(Start);
-		cost[Start] = 0;
-		parent[Start] = EOF;
+		visited[Start] = {0, EOF};
+//		cost_[Start] = 0;
+//		parent_[Start] = EOF;
 
 		while (!openList.empty()) {
 			Node u = openList.top().second;
@@ -127,14 +133,14 @@ public:
 
 			if (u == Goal) {
 				openedCount = visited.size();
-				visited.clear();
+//				visited.clear();
 				return nExpanded;
 			}
 
-			if (cost[u] > LIMIT_DEPTH) {
+			if (visited[u].cost_ > LIMIT_DEPTH) {
 				cout << "Height limit Exceeded @" << endl << u;
 				openedCount = visited.size();
-				visited.clear();
+//				visited.clear();
 				break;
 			}
 
@@ -150,14 +156,16 @@ public:
 //					cout <<xx <<" -- " << yy << endl;
 					Node v = u;
 					swap(v.A[zX][zY], v.A[xx][yy]);
-					double newCost = cost[u] + 1;
+					double newCost = visited[u].cost_ + 1;
 //visited.find( v ) == visited.end()
-					if (visited.find(v) == visited.end() || newCost < cost[v]) { //2nd condtn might not be needed
+					if (visited.find(v) == visited.end() ||
+					    newCost < visited[u].cost_) { //2nd condition might not be needed
 
 //						visited[v] = true;
-						visited.insert(v);
-						cost[v] = newCost;
-						parent[v] = Node::oppositeDirection(Mov);
+//						visited.insert(v);
+//						cost_[v] = newCost;
+//						parent_[v] = Node::oppositeDirection(Mov);
+						visited[v] = {newCost, Node::oppositeDirection(Mov)};
 						double Priority = newCost + Heuristic(v, Goal);
 						openList.push({-Priority, v});
 					}
@@ -165,7 +173,7 @@ public:
 			}
 
 		}
-//		parent.clear();
+//		parent_.clear();
 		return nExpanded;
 	}
 
@@ -175,9 +183,9 @@ public:
 
 	virtual ~aStarSearch() {
 		heuristicType = NULL;
-//		visited.clear();
-		parent.clear();
-		cost.clear();
+		visited.clear();
+//		parent_.clear();
+//		cost_.clear();
 	}
 };
 

@@ -10,9 +10,9 @@ void printSolution(aStarSearch &starSearch, const Node &Start, const Node &Goal)
 
 	//print soln
 	vector<Node> Path;
-	while (starSearch.parent[now] != EOF) {
+	while (starSearch.visited[now].parent_ != EOF) {
 		Path.push_back(now);
-		now = now.getNode(starSearch.parent[now]);
+		now = now.getNode(starSearch.visited[now].parent_);
 	}
 	Path.push_back(Start);
 	reverse(Path.begin(), Path.end());
@@ -28,7 +28,7 @@ void executeSearch(const Node &Start, const Node &Goal, int heuristic, bool prin
 	auto endTime = chrono::steady_clock::now();
 
 	auto diff = endTime - startTime;
-	cout << "No of Steps: " << (int) starSearch->cost[Goal] << endl;
+	cout << "No of Steps: " << (int) starSearch->visited[Goal].cost_ << endl;
 	cout << "No of Nodes Expanded: " << nExpanded << endl;
 	cout << "No of Nodes Opened: " << starSearch->openedCount << endl;
 	cout << "Execution Time: " << chrono::duration<double, milli>(diff).count() << "ms" << endl;

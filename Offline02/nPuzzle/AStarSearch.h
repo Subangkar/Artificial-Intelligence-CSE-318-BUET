@@ -19,7 +19,8 @@ class aStarSearch {
 public:
 //	map<Node, bool> visited;
 	map<Node, double> cost;
-	map<Node, Node> parent;
+//	map<Node, Node> parent;
+	map<Node, int> parent;
 
 	size_t openedCount;
 
@@ -110,10 +111,11 @@ public:
 
 		priority_queue<pair<double, Node> > openList;
 		map<Node, bool> visited;
+//		set<Node> visited;
 		openList.push({0, Start});
 		visited[Start] = true;
 		cost[Start] = 0;
-		parent[Start] = Start;
+		parent[Start] = EOF;
 
 		while (!openList.empty()) {
 			Node u = openList.top().second;
@@ -147,11 +149,11 @@ public:
 					swap(v.A[zX][zY], v.A[xx][yy]);
 					double newCost = cost[u] + 1;
 
-					if (!visited[v] || newCost < cost[v]) {
+					if (visited.find( v ) == visited.end() || newCost < cost[v]) {
 
 						visited[v] = true;
 						cost[v] = newCost;
-						parent[v] = u;
+						parent[v] = Node::oppositeDirection(Mov);
 						double Priority = newCost + Heuristic(v, Goal);
 						openList.push({-Priority, v});
 					}

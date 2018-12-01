@@ -10,9 +10,9 @@ void printSolution(aStarSearch &starSearch, const Node &Start, const Node &Goal)
 
 	//print soln
 	vector<Node> Path;
-	while (!(starSearch.parent[now] == now)) {
+	while (starSearch.parent[now] != EOF) {
 		Path.push_back(now);
-		now = starSearch.parent[now];
+		now = now.getNode(starSearch.parent[now]);
 	}
 	Path.push_back(Start);
 	reverse(Path.begin(), Path.end());
@@ -72,7 +72,7 @@ int main() {
 			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
 
 			cout << "#Linear Conflicts Heuristics: " << endl;
-			executeSearch(Start, Goal, LINEAR_CONFLICT, false);
+			executeSearch(Start, Goal, LINEAR_CONFLICT, true);
 
 //			cout << "#Hamming Distance Heuristics: " << endl;
 //			executeSearch(Start, Goal, HAMMING_DISTANCE,false);

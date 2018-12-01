@@ -163,6 +163,21 @@ public:
 		swap(v.A[zX][zY], v.A[zXnew][zYnew]);
 		return v;
 	}
+
+	static int oppositeDirection(int direction){
+		switch(direction){
+			case LEFT:
+				return RIGHT;
+			case RIGHT:
+				return LEFT;
+			case UP:
+				return DOWN;
+			case DOWN:
+				return UP;
+			default:
+				return EOF;
+		}
+	}
 };
 
 int Node::boardSqSize = 0;

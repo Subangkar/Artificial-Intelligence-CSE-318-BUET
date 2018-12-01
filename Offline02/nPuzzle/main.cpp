@@ -72,7 +72,7 @@ int main() {
 			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
 
 			cout << "#Linear Conflicts Heuristics: " << endl;
-			executeSearch(Start, Goal, LINEAR_CONFLICT, true);
+			executeSearch(Start, Goal, LINEAR_CONFLICT, false);
 
 //			cout << "#Hamming Distance Heuristics: " << endl;
 //			executeSearch(Start, Goal, HAMMING_DISTANCE,false);

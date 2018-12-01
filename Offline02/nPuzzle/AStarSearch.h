@@ -1,6 +1,7 @@
 //
 // Created by subangkar on 11/25/18.
 //
+#include <set>
 #include "Node.h"
 
 
@@ -110,10 +111,12 @@ public:
 		int nExpanded = 0;
 
 		priority_queue<pair<double, Node> > openList;
-		map<Node, bool> visited;
-//		set<Node> visited;
+//		map<Node,pair<double,int>> visited;//
+//		map<Node, bool> visited;
+		set<Node> visited;
 		openList.push({0, Start});
-		visited[Start] = true;
+//		visited[Start] = true;
+		visited.insert(Start);
 		cost[Start] = 0;
 		parent[Start] = EOF;
 
@@ -148,10 +151,11 @@ public:
 					Node v = u;
 					swap(v.A[zX][zY], v.A[xx][yy]);
 					double newCost = cost[u] + 1;
+//visited.find( v ) == visited.end()
+					if (visited.find(v) == visited.end() || newCost < cost[v]) { //2nd condtn might not be needed
 
-					if (visited.find( v ) == visited.end() || newCost < cost[v]) {
-
-						visited[v] = true;
+//						visited[v] = true;
+						visited.insert(v);
 						cost[v] = newCost;
 						parent[v] = Node::oppositeDirection(Mov);
 						double Priority = newCost + Heuristic(v, Goal);

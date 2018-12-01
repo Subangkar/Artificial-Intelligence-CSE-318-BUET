@@ -64,7 +64,6 @@ public:
 	}
 
 	~Node() {
-//		return;
 		if (A == nullptr) return;
 		for (int i = 0; i < boardSqSize; ++i) {
 			delete A[i];
@@ -77,7 +76,6 @@ public:
 		for (int i = 0; i < boardSqSize; i++)
 			for (int j = 0; j < boardSqSize; j++)
 				if (A[i][j] != right.A[i][j]) return false;
-//			if(std::memcmp(A[i],right.A[i], sizeof(A[i])))
 		return true;
 	}
 
@@ -112,20 +110,9 @@ public:
 //		cout << boardSizeOdd << " " << blank_row_no << " " << invCount << endl;
 		if (boardSizeOdd && !(invCount & 1)) // odd-board & even-inversions
 			return true;
-//		else if (!boardSizeOdd && ((blank_row_no + getInvCount(arr)) % 2) == 0) // even-board &
-//			return false;
-//		return true;
-		else {
-			int pos = findEmptyPosition();
-//			return (pos & 1) != 0 == !(invCount & 1);
-			if (pos & 1)
-				return !(invCount & 1);
-			else
-				return invCount & 1;
-		}
-		//If N is even, puzzle instance is solvable if
-		//the blank is on an even row counting from the bottom (second-last, fourth-last, etc.) and number of inversions is odd.
-		//the blank is on an odd row counting from the bottom (last, third-last, fifth-last, etc.) and number of inversions is even.
+		else if (!boardSizeOdd && ((blank_row_no + getInvCount(arr)) & 1)) // even-board & odd-sum
+			return true;
+		return false;
 	}
 
 
@@ -138,16 +125,6 @@ public:
 
 		return inv_count;
 	}
-
-	int findEmptyPosition() // from bottom right corner
-	{
-		// start from bottom-right corner of matrix
-		for (int i = Node::boardSqSize - 1; i >= 0; i--)
-			for (int j = Node::boardSqSize - 1; j >= 0; j--)
-				if (A[i][j] == 0)
-					return Node::boardSqSize - i;
-	}
-
 };
 
 int Node::boardSqSize = 0;

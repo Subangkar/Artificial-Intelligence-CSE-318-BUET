@@ -28,3 +28,5 @@ Offline02/nPuzzle/\.idea/
 Offline02/nPuzzle/cmake-build-debug/
 
 *.out
+
+Offline02/nPuzzle/out\.txt

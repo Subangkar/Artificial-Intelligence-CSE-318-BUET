@@ -5,6 +5,7 @@
 #ifndef NPUZZLE_NODE_H
 #define NPUZZLE_NODE_H
 #define BOARD_SQ_SIZE 3
+#define PRINT_W 3
 
 //#include<bits/stdc++.h>
 #include <iostream>
@@ -18,16 +19,28 @@
 #include <cstdlib>
 #include <cstring>
 
+#define RIGHT 0
+#define LEFT 1
+#define DOWN 2
+#define UP 3
+
 using namespace std;
+
+int dirX[4] = {0, 0, 1, -1}; // UP-DOWN-RIGHT-LEFT
+int dirY[4] = {1, -1, 0, 0}; // UP-DOWN-RIGHT-LEFT
+
+
 
 class Node {
 public:
 	int **A = nullptr;
+	bool emptyNode = true;
 	static int boardSqSize;
 
 	friend ostream &operator<<(ostream &os, const Node &node);
 
 	Node() {
+		emptyNode = true;
 		A = new int *[boardSqSize];
 		for (int i = 0; i < boardSqSize; ++i) {
 			A[i] = new int[boardSqSize];
@@ -38,6 +51,8 @@ public:
 
 	Node(const Node &node) {
 		this->~Node();
+//		emptyNode = false;
+		this->emptyNode = node.emptyNode;
 		A = new int *[boardSqSize];
 		for (int i = 0; i < boardSqSize; ++i) {
 			A[i] = new int[boardSqSize];
@@ -51,6 +66,7 @@ public:
 
 	Node &operator=(const Node &node) {
 		this->~Node();
+		this->emptyNode = node.emptyNode;
 		A = new int *[boardSqSize];
 		for (int i = 0; i < boardSqSize; ++i) {
 			A[i] = new int[boardSqSize];
@@ -125,6 +141,28 @@ public:
 
 		return inv_count;
 	}
+
+	Node getNode(int direction) {
+		if (A == nullptr || direction > 3)
+			return *this;
+
+		int zX = 0, zY = 0;
+		for (int i = 0; i < Node::boardSqSize; i++)
+			for (int j = 0; j < Node::boardSqSize; j++)
+				if (!A[i][j]) {
+					zX = i, zY = j;
+					break;
+				}
+		int zXnew = zX + dirX[direction];
+		int zYnew = zY + dirY[direction];
+
+		if (zX < 0 || zY < 0 || zX >= Node::boardSqSize || zY >= Node::boardSqSize)
+			return Node();
+
+		Node v = *this;
+		swap(v.A[zX][zY], v.A[zXnew][zYnew]);
+		return v;
+	}
 };
 
 int Node::boardSqSize = 0;
@@ -133,7 +171,10 @@ ostream &operator<<(ostream &os, const Node &node) {
 	if (!node.A) return os;
 	for (int i = 0; i < Node::boardSqSize; i++) {
 		for (int j = 0; j < Node::boardSqSize; j++)
-			os << setw(2) << node.A[i][j] << " ";
+			if (node.A[i][j])
+				os << setw(PRINT_W) << node.A[i][j] << " ";
+			else
+				os << setw(PRINT_W) << "  " << " ";
 		os << endl;
 	}
 	os << " ---------" << std::endl;

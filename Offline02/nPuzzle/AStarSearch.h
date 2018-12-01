@@ -12,17 +12,16 @@
 #define HAMMING_DISTANCE 2
 #define LINEAR_CONFLICT 3
 
-#define LIMIT_DEPTH 47
+#define LIMIT_DEPTH 48
 
 
 class aStarSearch {
 public:
-	map<Node, bool> visited;
+//	map<Node, bool> visited;
 	map<Node, double> cost;
 	map<Node, Node> parent;
 
-	int dirX[4] = {0, 0, 1, -1};
-	int dirY[4] = {1, -1, 0, 0};
+	size_t openedCount;
 
 	int heuristicType = NULL;
 
@@ -110,6 +109,7 @@ public:
 		int nExpanded = 0;
 
 		priority_queue<pair<double, Node> > openList;
+		map<Node, bool> visited;
 		openList.push({0, Start});
 		visited[Start] = true;
 		cost[Start] = 0;
@@ -120,10 +120,16 @@ public:
 			openList.pop();
 			++nExpanded;
 
-			if (u == Goal) return nExpanded;
+			if (u == Goal) {
+				openedCount = visited.size();
+				visited.clear();
+				return nExpanded;
+			}
 
 			if (cost[u] > LIMIT_DEPTH) {
 				cout << "Height limit Exceeded @" << endl << u;
+				openedCount = visited.size();
+				visited.clear();
 				break;
 			}
 
@@ -139,14 +145,14 @@ public:
 //					cout <<xx <<" -- " << yy << endl;
 					Node v = u;
 					swap(v.A[zX][zY], v.A[xx][yy]);
-					double NewCost = cost[u] + 1;
+					double newCost = cost[u] + 1;
 
-					if (!visited[v] || NewCost < cost[v]) {
+					if (!visited[v] || newCost < cost[v]) {
 
 						visited[v] = true;
-						cost[v] = NewCost;
+						cost[v] = newCost;
 						parent[v] = u;
-						double Priority = NewCost + Heuristic(v, Goal);
+						double Priority = newCost + Heuristic(v, Goal);
 						openList.push({-Priority, v});
 					}
 				}
@@ -163,7 +169,7 @@ public:
 
 	virtual ~aStarSearch() {
 		heuristicType = NULL;
-		visited.clear();
+//		visited.clear();
 		parent.clear();
 		cost.clear();
 	}

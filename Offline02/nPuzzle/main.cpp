@@ -5,8 +5,8 @@
 #define MAX 105
 
 
-void printSolution(aStarSearch &starSearch, Node &Start, Node &Goal) {
-	Node now = Goal;
+void printSolution(aStarSearch &starSearch, const Node &Start, const Node &Goal) {
+	auto now = Goal;
 
 	//print soln
 	vector<Node> Path;
@@ -19,22 +19,23 @@ void printSolution(aStarSearch &starSearch, Node &Start, Node &Goal) {
 	for (auto &i : Path) cout << i;
 }
 
-void executeSearch(Node &Start, Node &Goal, int heuristic, bool printSol = true) {
+void executeSearch(const Node &Start, const Node &Goal, int heuristic, bool printSol = true) {
 
-	aStarSearch starSearch;
-	starSearch.setHeuristic(heuristic);
+	auto *starSearch = new aStarSearch();
+	starSearch->setHeuristic(heuristic);
 	auto startTime = chrono::steady_clock::now();
-	int nExpanded = starSearch.AStarSearch(Start, Goal);
+	int nExpanded = starSearch->AStarSearch(Start, Goal);
 	auto endTime = chrono::steady_clock::now();
 
 	auto diff = endTime - startTime;
-	cout << "No of Steps: " << (int) starSearch.cost[Goal] << endl;
+	cout << "No of Steps: " << (int) starSearch->cost[Goal] << endl;
 	cout << "No of Nodes Expanded: " << nExpanded << endl;
-	cout << "No of Nodes Opened: " << starSearch.visited.size() << endl;
-	cout << "Execution Time: " << chrono::duration <double, milli> (diff).count() << "ms" << endl;
+	cout << "No of Nodes Opened: " << starSearch->openedCount << endl;
+	cout << "Execution Time: " << chrono::duration<double, milli>(diff).count() << "ms" << endl;
 	cout << endl;
 
-	if (printSol) printSolution(starSearch, Start, Goal);
+	if (printSol) printSolution(*starSearch, Start, Goal);
+	delete starSearch;
 }
 
 int main() {
@@ -53,8 +54,12 @@ int main() {
 		for (int j = 0; j < boardSqSize; j++) {
 			cin >> Start.A[i][j];
 		}
-//	cout << Goal;
-//	cout << Start;
+	cout << "Start: \n" << Start;
+//	cout << "l: \n" << Start.getNode(LEFT);
+//	cout << "r: \n" << Start.getNode(RIGHT);
+//	cout << "d: \n" << Start.getNode(DOWN);
+//	cout << "u: \n" << Start.getNode(UP);
+	cout << "Goal: \n" << Goal;
 //	cout << aStarSearch::ManHattan(Start, Goal) << endl;
 //	cout << aStarSearch::HammingDistance(Start, Goal) << endl;
 //	cout << aStarSearch::nLinearConflicts(Start, Goal) << endl;
@@ -66,11 +71,11 @@ int main() {
 			cout << "#ManHattan Distance Heuristics: " << endl;
 			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
 
+			cout << "#Linear Conflicts Heuristics: " << endl;
+			executeSearch(Start, Goal, LINEAR_CONFLICT, false);
+
 //			cout << "#Hamming Distance Heuristics: " << endl;
 //			executeSearch(Start, Goal, HAMMING_DISTANCE,false);
-
-			cout << "#Linear Conflicts Heuristics: " << endl;
-			executeSearch(Start, Goal, LINEAR_CONFLICT,false);
 		}
 	}
 }

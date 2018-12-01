@@ -1,3 +1,4 @@
+#include <chrono>
 #include "Node.h"
 #include "AStarSearch.h"
 
@@ -19,12 +20,18 @@ void printSolution(aStarSearch &starSearch, Node &Start, Node &Goal) {
 }
 
 void executeSearch(Node &Start, Node &Goal, int heuristic, bool printSol = true) {
+
 	aStarSearch starSearch;
 	starSearch.setHeuristic(heuristic);
+	auto startTime = chrono::steady_clock::now();
 	int nExpanded = starSearch.AStarSearch(Start, Goal);
+	auto endTime = chrono::steady_clock::now();
+
+	auto diff = endTime - startTime;
 	cout << "No of Steps: " << (int) starSearch.cost[Goal] << endl;
 	cout << "No of Nodes Expanded: " << nExpanded << endl;
 	cout << "No of Nodes Opened: " << starSearch.visited.size() << endl;
+	cout << "Execution Time: " << chrono::duration <double, milli> (diff).count() << "ms" << endl;
 	cout << endl;
 
 	if (printSol) printSolution(starSearch, Start, Goal);
@@ -59,8 +66,8 @@ int main() {
 			cout << "#ManHattan Distance Heuristics: " << endl;
 			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
 
-			cout << "#Hamming Distance Heuristics: " << endl;
-			executeSearch(Start, Goal, HAMMING_DISTANCE,false);
+//			cout << "#Hamming Distance Heuristics: " << endl;
+//			executeSearch(Start, Goal, HAMMING_DISTANCE,false);
 
 			cout << "#Linear Conflicts Heuristics: " << endl;
 			executeSearch(Start, Goal, LINEAR_CONFLICT,false);

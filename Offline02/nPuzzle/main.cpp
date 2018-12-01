@@ -44,21 +44,19 @@ int main() {
 	int boardSqSize = 3;
 	cin >> boardSqSize;
 	Node::boardSqSize = boardSqSize;
+
 	Node Goal;
 	for (int i = 0; i < boardSqSize; i++)
 		for (int j = 0; j < boardSqSize; j++)
 			Goal.A[i][j] = i * Node::boardSqSize + j + 1;
 	Goal.A[Node::boardSqSize - 1][Node::boardSqSize - 1] = 0;
+
 	Node Start;
 	for (int i = 0; i < boardSqSize; i++)
-		for (int j = 0; j < boardSqSize; j++) {
+		for (int j = 0; j < boardSqSize; j++)
 			cin >> Start.A[i][j];
-		}
+
 	cout << "Start: \n" << Start;
-//	cout << "l: \n" << Start.getNode(LEFT);
-//	cout << "r: \n" << Start.getNode(RIGHT);
-//	cout << "d: \n" << Start.getNode(DOWN);
-//	cout << "u: \n" << Start.getNode(UP);
 	cout << "Goal: \n" << Goal;
 //	cout << aStarSearch::ManHattan(Start, Goal) << endl;
 //	cout << aStarSearch::HammingDistance(Start, Goal) << endl;
@@ -68,10 +66,10 @@ int main() {
 		cout << "No Solution" << endl;
 	} else {
 		{
-			cout << "#ManHattan Distance Heuristics: " << endl;
+			cout << "# ManHattan Distance Heuristics: " << endl;
 			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
 
-			cout << "#Linear Conflicts Heuristics: " << endl;
+			cout << "# Linear Conflicts Heuristics: " << endl;
 			executeSearch(Start, Goal, LINEAR_CONFLICT, false);
 
 //			cout << "#Hamming Distance Heuristics: " << endl;

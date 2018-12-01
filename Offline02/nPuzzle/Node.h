@@ -24,6 +24,8 @@
 #define DOWN 2
 #define UP 3
 
+typedef int direction_t;
+
 using namespace std;
 
 int dirX[4] = {0, 0, 1, -1}; // UP-DOWN-RIGHT-LEFT
@@ -142,30 +144,42 @@ public:
 		return inv_count;
 	}
 
-	Node getNode(int direction) {
+	// not works donno why not
+	Node getNode(int direction, int zX = -1, int zY = -1) {
 		if (A == nullptr || direction > 3)
 			return *this;
 
-		int zX = 0, zY = 0;
-		for (int i = 0; i < Node::boardSqSize; i++)
-			for (int j = 0; j < Node::boardSqSize; j++)
-				if (!A[i][j]) {
-					zX = i, zY = j;
-					break;
-				}
+		if (zX == -1 || zY == -1) {
+			if (!getZeroPos(*this, zX, zY))
+				return Node();
+		}
+
 		int zXnew = zX + dirX[direction];
 		int zYnew = zY + dirY[direction];
 
-		if (zX < 0 || zY < 0 || zX >= Node::boardSqSize || zY >= Node::boardSqSize)
+		if (zXnew < 0 || zYnew < 0 || zXnew >= Node::boardSqSize || zYnew >= Node::boardSqSize)
 			return Node();
 
 		Node v = *this;
+//		cout << v;
 		swap(v.A[zX][zY], v.A[zXnew][zYnew]);
 		return v;
 	}
 
-	static int oppositeDirection(int direction){
-		switch(direction){
+	static bool getZeroPos(const Node &node, int &zX, int &zY) {
+		zX = zY = -1;
+		for (int i = 0; i < Node::boardSqSize; i++) {
+			for (int j = 0; j < Node::boardSqSize; j++)
+				if (!node.A[i][j]) {
+					zX = i, zY = j;
+					return true;
+				}
+		}
+		return false;
+	}
+
+	static int oppositeDirection(int direction) {
+		switch (direction) {
 			case LEFT:
 				return RIGHT;
 			case RIGHT:
@@ -177,6 +191,10 @@ public:
 			default:
 				return EOF;
 		}
+	}
+
+	bool isEmptyNode() const {
+		return emptyNode;
 	}
 };
 

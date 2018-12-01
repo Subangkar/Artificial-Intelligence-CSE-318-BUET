@@ -30,7 +30,7 @@ int main() {
 		cout << "No Solution" << endl;
 	} else {
 		aStarSearch starSearch;
-		starSearch.setHeuristic(MANHATTAN_DISTANCE);
+		starSearch.setHeuristic(LINEAR_CONFLICT);
 		int nExpanded = starSearch.AStarSearch(Start, Goal);
 		Node now = Goal;
 

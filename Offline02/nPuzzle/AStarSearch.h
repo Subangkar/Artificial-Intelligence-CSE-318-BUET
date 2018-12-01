@@ -1,6 +1,8 @@
 //
 // Created by subangkar on 11/25/18.
 //
+#include "Node.h"
+
 
 #ifndef NPUZZLE_ASTARSEARCH_H
 #define NPUZZLE_ASTARSEARCH_H
@@ -10,10 +12,8 @@
 #define HAMMING_DISTANCE 2
 #define LINEAR_CONFLICT 3
 
-#define LIMIT_DEPTH 40
+#define LIMIT_DEPTH 47
 
-
-#include "Node.h"
 
 class aStarSearch {
 public:

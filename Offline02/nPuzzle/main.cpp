@@ -4,32 +4,55 @@
 #define MAX 105
 
 
+int getInvCount(const vector<int>& arr) {
+	int inv_count = 0;
+	for (int i = 0; i < arr.size()-1; i++)
+		for (int j = i + 1; j < arr.size(); j++)
+			if (arr[i] > arr[j])
+				inv_count++;
+
+	return inv_count;
+}
+
 int main() {
 	freopen("in.txt", "r", stdin);
-//	freopen("out.txt", "w", stdout);
-
+	freopen("out.txt", "w", stdout);
 	int boardSqSize = 3;
 	cin >> boardSqSize;
 	Node::boardSqSize = boardSqSize;
+//	int inp[(boardSqSize * boardSqSize)];
 	Node Goal;
-	for (int i = 0; i < boardSqSize; i++) for (int j = 0; j < boardSqSize; j++) Goal.A[i][j] = i * 3 + j;
-	Node Start;
 	for (int i = 0; i < boardSqSize; i++)
 		for (int j = 0; j < boardSqSize; j++)
+			Goal.A[i][j] = i * Node::boardSqSize + j;
+	Node Start;
+	vector<int> inp;
+	for (int i = 0; i < boardSqSize; i++)
+		for (int j = 0; j < boardSqSize; j++) {
 			cin >> Start.A[i][j];
-	aStarSearch starSearch;
-	starSearch.AStarSearch(Start,Goal);
-	Node now = Goal;
-	vector<Node> Path;
-	while (!(starSearch.parent[now] == now)) {
-		Path.push_back(now);
-		now = starSearch.parent[now];
+			if (Start.A[i][j])
+				inp.push_back(Start.A[i][j]);
+		}
+	if (!Start.isSolveAble()) {
+		cout << "No Solution" << endl;
+		return 0;
 	}
-	Path.push_back(Start);
-	reverse(Path.begin(), Path.end());
-	for (auto &i : Path) i.Print();
+	aStarSearch starSearch;
+	starSearch.AStarSearch(Start, Goal);
+	Node now = Goal;
+	if (starSearch.parent.empty()) {
+	} else {
+		vector<Node> Path;
+		while (!(starSearch.parent[now] == now)) {
+			Path.push_back(now);
+			now = starSearch.parent[now];
+		}
+		Path.push_back(Start);
+		reverse(Path.begin(), Path.end());
+		for (auto &i : Path) cout << i;
 
-	printf("%.0lf\n", starSearch.cost[Goal]);
+		printf("%.0lf\n", starSearch.cost[Goal]);
+	}
 }
 
 /*

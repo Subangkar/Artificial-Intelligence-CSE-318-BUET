@@ -19,7 +19,7 @@ public:
 
 	bool isValid(int x, int y) { return x >= 0 && y >= 0 && x < Node::boardSqSize && y < Node::boardSqSize; }
 
-	double MIsplaced(Node a, Node b) {
+	double MIsplaced(const Node &a, const Node &b) {
 		double Ans = 0;
 		for (int i = 0; i < Node::boardSqSize; i++)
 			for (int j = 0; j < Node::boardSqSize; j++)
@@ -27,7 +27,7 @@ public:
 		return Ans;
 	}
 
-	double ManHattan(Node a, Node b) {
+	double ManHattan(const Node &a, const Node &b) {
 		double Ans = 0;
 		int pX[(Node::boardSqSize * Node::boardSqSize) + 1];
 		int pY[(Node::boardSqSize * Node::boardSqSize) + 1];
@@ -41,7 +41,7 @@ public:
 		return Ans;
 	}
 
-	double Euclidean(Node a, Node b) {
+	double Euclidean(const Node &a, const Node &b) {
 		double Ans = 0;
 		int pX[(Node::boardSqSize * Node::boardSqSize) + 1];
 		int pY[(Node::boardSqSize * Node::boardSqSize) + 1];
@@ -55,7 +55,7 @@ public:
 		return Ans;
 	}
 
-	double OutOfRowColumn(Node a, Node b) {
+	double OutOfRowColumn(const Node &a, const Node &b) {
 		double Ans = 0;
 		int pX[(Node::boardSqSize * Node::boardSqSize) + 1];
 		int pY[(Node::boardSqSize * Node::boardSqSize) + 1];
@@ -69,7 +69,7 @@ public:
 		return Ans;
 	}
 
-	double nMaxSwap(Node a, const Node &b) {
+	double nMaxSwap(const Node &a, const Node &b) {
 		int P[(Node::boardSqSize * Node::boardSqSize) + 1];
 		int B[(Node::boardSqSize * Node::boardSqSize) + 1];
 		for (int i = 0; i < Node::boardSqSize; i++)
@@ -104,10 +104,12 @@ public:
 		visited[Start] = true;
 		cost[Start] = 0;
 		parent[Start] = Start;
+
 		while (!pq.empty()) {
 			Node u = pq.top().second;
 			pq.pop();
-			if (u == Goal) break;
+
+			if (u == Goal) return;
 
 			int zX = 0, zY = 0;
 			for (int i = 0; i < Node::boardSqSize; i++)
@@ -118,10 +120,13 @@ public:
 				int xx = zX + dirX[Mov];
 				int yy = zY + dirY[Mov];
 				if (isValid(xx, yy)) {
+//					cout <<xx <<" -- " << yy << endl;
 					Node v = u;
 					swap(v.A[zX][zY], v.A[xx][yy]);
 					double NewCost = cost[u] + 1;
+
 					if (!visited[v] || NewCost < cost[v]) {
+
 						visited[v] = true;
 						cost[v] = NewCost;
 						parent[v] = u;
@@ -132,6 +137,7 @@ public:
 			}
 
 		}
+		parent.clear();
 	}
 
 };

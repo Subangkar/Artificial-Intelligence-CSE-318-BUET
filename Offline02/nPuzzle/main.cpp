@@ -31,9 +31,11 @@ void executeSearch(const Node &Start, const Node &Goal, int heuristic, bool prin
 	cout << "No of Steps: " << (int) starSearch->visited[Goal].cost_ << endl;
 	cout << "No of Nodes Expanded: " << nExpanded << endl;
 	cout << "No of Nodes Opened: " << starSearch->openedCount << endl;
+	cout << "No of Nodes Pushed: " << starSearch->nPushed << endl;
 	cout << "Max Depth Reached: " << starSearch->max_depth << endl;
 	cout << "Execution Time: " << chrono::duration<double, milli>(diff).count() << "ms" << endl;
 	cout << endl;
+	fflush(stdout);
 
 	if (printSol) printSolution(*starSearch, Start, Goal);
 	delete starSearch;
@@ -68,18 +70,14 @@ int main() {
 		cout << "No Solution" << endl;
 	} else {
 		{
-			cout << "# ManHattan Distance Heuristics: " << endl;
-			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
-
 			cout << "# Linear Conflicts Heuristics: " << endl;
 			executeSearch(Start, Goal, LINEAR_CONFLICT, false);
 
-//			cout << "#Hamming Distance Heuristics: " << endl;
-//			executeSearch(Start, Goal, HAMMING_DISTANCE, false);
+			cout << "# ManHattan Distance Heuristics: " << endl;
+			executeSearch(Start, Goal, MANHATTAN_DISTANCE, false);
+
+			cout << "#Hamming Distance Heuristics: " << endl;
+			executeSearch(Start, Goal, HAMMING_DISTANCE, true);
 		}
 	}
 }
-
-/*
-8 2 0 5 4 7 3 6 1
-*/

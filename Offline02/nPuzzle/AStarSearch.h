@@ -15,20 +15,43 @@
 #define LIMIT_DEPTH 60
 #define NODE_LIMIT 10000000
 
-#define cost_ first
-#define parent_ second
+//#define isClosed_ first.first
+#define cost_ cost
+//#define cost_ first
+//#define parent_ second
+#define parent_ parent
 
 
 typedef int cost_t;
 typedef int parent_t;
 
 
+struct NodeInfo {
+	bool isClosed;
+	cost_t cost;
+	parent_t parent;
+//	Node node;
+
+	bool operator==(const NodeInfo &rhs) const {
+		return parent == rhs.parent &&
+		       cost == rhs.cost;
+	}
+
+	bool operator!=(const NodeInfo &rhs) const {
+		return !(rhs == *this);
+	}
+};
+
+
 class aStarSearch {
 public:
-	map<Node, pair<cost_t, parent_t>> visited;//
+//	map<Node, pair<pair<bool, cost_t>, parent_t>> visited;//
+//	map<Node, pair<cost_t, parent_t>> visited;//
+	map<Node, NodeInfo> visited;//
 
 	size_t openedCount;
 	int max_depth;
+	int nPushed;
 
 	int heuristicType = NULL;
 
@@ -112,26 +135,30 @@ public:
 		return 0;
 	}
 
-	int AStarSearch(Node Start, const Node &Goal) {
+	int AStarSearch(const Node &Start, const Node &Goal) {
 		int nExpanded = 0;
 		max_depth = 0;
-
+//		int x = 0;
+		nPushed = 0;
 		priority_queue<pair<double, Node> > openList;
 		openList.push({0, Start});
-		visited[Start] = {0, EOF};
+		visited[Start] = {false, 0, EOF};
+//		visited[Start] = {{false, 0}, EOF};
 
 		while (!openList.empty()) {
 			Node u = openList.top().second;
 			openList.pop();
 			++nExpanded;
+			NodeInfo& uInfo = visited[u];
+			uInfo.isClosed = true;
 
-			max_depth = max(max_depth, visited[u].cost_);
+			max_depth = max(max_depth, visited[u].cost);
 
 			if (u == Goal) {
 				break;
 			}
 
-			if (visited[u].cost_ > LIMIT_DEPTH) {
+			if (uInfo.cost > LIMIT_DEPTH) {
 				cout << "Height limit Exceeded @" << endl << u;
 				break;
 			}
@@ -151,16 +178,17 @@ public:
 //				Node v = u.getNode(dir, zX, zY);
 				if (isValid(zXnew, zYnew)) {
 //                if(!v.isEmptyNode()){s
-//					cout <<xx <<" -- " << yy << endl;
 //					Node v = u.getNode(dir, zX, zY);
 					Node v = u;
 					swap(v.A[zX][zY], v.A[zXnew][zYnew]);
-					double newCost = visited[u].cost_ + 1;
 
-					if (visited.find(v) == visited.end() ||
-					    newCost < visited[v].cost_) { //2nd condition might not be needed
+					bool isVisited = visited.find(v) != visited.end();
+					if (isVisited && visited[v].isClosed)continue;
 
-						visited[v] = {newCost, Node::oppositeDirection(dir)};
+					double newCost = uInfo.cost + 1;
+					if (!isVisited || newCost < visited[v].cost) { //2nd condition might not be needed
+						++nPushed;
+						visited[v] = {false, static_cast<cost_t>(newCost), Node::oppositeDirection(dir)};
 						double Priority = newCost + Heuristic(v, Goal);
 						openList.push({-Priority, v});
 					}

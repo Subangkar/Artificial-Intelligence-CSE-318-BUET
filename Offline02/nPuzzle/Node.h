@@ -211,7 +211,7 @@ ostream &operator<<(ostream &os, const Node &node) {
 				os << setw(PRINT_W) << "  " << " ";
 		os << endl;
 	}
-	os << " ---------" << std::endl;
+	os << " ----------- " << std::endl;
 	return os;
 }
 

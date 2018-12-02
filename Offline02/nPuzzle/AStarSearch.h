@@ -15,10 +15,7 @@
 #define LIMIT_DEPTH 60
 #define NODE_LIMIT 10000000
 
-//#define isClosed_ first.first
 #define cost_ cost
-//#define cost_ first
-//#define parent_ second
 #define parent_ parent
 
 
@@ -30,7 +27,6 @@ struct NodeInfo {
 	bool isClosed;
 	cost_t cost;
 	parent_t parent;
-//	Node node;
 
 	bool operator==(const NodeInfo &rhs) const {
 		return parent == rhs.parent &&
@@ -45,15 +41,13 @@ struct NodeInfo {
 
 class aStarSearch {
 public:
-//	map<Node, pair<pair<bool, cost_t>, parent_t>> visited;//
-//	map<Node, pair<cost_t, parent_t>> visited;//
 	map<Node, NodeInfo> visited;//
 
 	size_t openedCount;
 	int max_depth;
 	int nPushed;
 
-	int heuristicType = NULL;
+	int heuristicType = 0;
 
 	bool isValid(int x, int y) { return x >= 0 && y >= 0 && x < Node::boardSqSize && y < Node::boardSqSize; }
 
@@ -138,18 +132,17 @@ public:
 	int AStarSearch(const Node &Start, const Node &Goal) {
 		int nExpanded = 0;
 		max_depth = 0;
-//		int x = 0;
 		nPushed = 0;
+
 		priority_queue<pair<double, Node> > openList;
 		openList.push({0, Start});
 		visited[Start] = {false, 0, EOF};
-//		visited[Start] = {{false, 0}, EOF};
 
 		while (!openList.empty()) {
 			Node u = openList.top().second;
 			openList.pop();
 			++nExpanded;
-			NodeInfo& uInfo = visited[u];
+			NodeInfo &uInfo = visited[u];
 			uInfo.isClosed = true;
 
 			max_depth = max(max_depth, visited[u].cost);
@@ -175,10 +168,7 @@ public:
 			for (direction_t dir = 0; dir < 4; dir++) {
 				int zXnew = zX + dirX[dir];
 				int zYnew = zY + dirY[dir];
-//				Node v = u.getNode(dir, zX, zY);
 				if (isValid(zXnew, zYnew)) {
-//                if(!v.isEmptyNode()){s
-//					Node v = u.getNode(dir, zX, zY);
 					Node v = u;
 					swap(v.A[zX][zY], v.A[zXnew][zYnew]);
 
@@ -205,10 +195,8 @@ public:
 	}
 
 	virtual ~aStarSearch() {
-		heuristicType = NULL;
+		heuristicType = 0;
 		visited.clear();
-//		parent_.clear();
-//		cost_.clear();
 	}
 };
 

@@ -165,7 +165,7 @@ public:
 			int zX = -1, zY = -1;
 			Node::getZeroPos(u, zX, zY);
 
-			for (direction_t dir = 0; dir < 4; dir++) {
+			for (int i=0, dir = 2; i < 4; i++,dir=(dir+1)%4) {
 				int zXnew = zX + dirX[dir];
 				int zYnew = zY + dirY[dir];
 				if (isValid(zXnew, zYnew)) {

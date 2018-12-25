@@ -7,7 +7,7 @@
 
 #include "tspDS.h"
 
-#define START_CITY_RANDOM (N-1) // (rand()%N)
+#define START_CITY_RANDOM (rand()%N) // (N-1) //
 
 enum heuristicFunc {
 	NearestNeighbor = 0, NearestInsertion, CheapestInsertion, TwoOPT, ThreeOPT
@@ -41,6 +41,17 @@ class Heuristics {
 	}
 
 
+	city_t findNearestUnvisited(city_t city) {
+		double minDist = numeric_limits<double>::max();
+		city_t nearestUnvisCity = EOF;
+		for (city_t neighbor = 0; neighbor < N; neighbor++) {
+			if (city != neighbor && !visited[neighbor] &&
+			    cityLocations[city].distanceWith(cityLocations[neighbor]) < minDist)
+				minDist = cityLocations[city].distanceWith(cityLocations[neighbor]), nearestUnvisCity = neighbor;
+		}
+		return nearestUnvisCity;
+	}
+
 	void insertEdgeToTourPath(city_t i, city_t r) {
 
 		/// now path has (i-j....-r) which to be converted into (i-r-j.....)
@@ -52,17 +63,6 @@ class Heuristics {
 		for (int k = static_cast<int>(tspTourPath.size() - 2); k >= 0 && tspTourPath[k] != i; k--) {
 			swap(tspTourPath[k], tspTourPath[k + 1]);
 		}
-	}
-
-	city_t findNearestUnvisited(city_t city) {
-		double minDist = numeric_limits<double>::max();
-		city_t nearestUnvisCity = EOF;
-		for (city_t neighbor = 0; neighbor < N; neighbor++) {
-			if (city != neighbor && !visited[neighbor] &&
-			    cityLocations[city].distanceWith(cityLocations[neighbor]) < minDist)
-				minDist = cityLocations[city].distanceWith(cityLocations[neighbor]), nearestUnvisCity = neighbor;
-		}
-		return nearestUnvisCity;
 	}
 
 	// finds the nearest unvisited one not included in current path
@@ -118,22 +118,25 @@ class Heuristics {
 		return nearestI;
 	}
 
+	// 3 bit combination for deletion & insertion of three edges
 	vector<city_t> threeOPTOperation(int i, int j, int k, int mask) {
-		bool Swap = static_cast<bool>(mask & 1);             //bit - 0
-		bool reverse1 = static_cast<bool>((mask >> 1) & 1);    //bit - 1
-		bool reverse2 = static_cast<bool>((mask >> 2) & 1);    //bit - 2
+		// i..(i+1)..j..(j+1)..k => swap => i..(j+1)..k..(i+1)..j
+
+		bool reverse2 = static_cast<bool>((mask >> 2) & 1);
+		bool reverse1 = static_cast<bool>((mask >> 1) & 1);
+		bool Swap = static_cast<bool>(mask & 1);
 
 		vector<city_t> newTourPath;
 		if (reverse1) reverse(tspTourPath.begin() + i + 1, tspTourPath.begin() + j + 1);
 		if (reverse2) reverse(tspTourPath.begin() + j + 1, tspTourPath.begin() + k + 1);
 
 		for (int x = 0; x <= i; x++) newTourPath.push_back(tspTourPath[x]);
-		if (!Swap) {
-			for (int x = i + 1; x <= j; x++) newTourPath.push_back(tspTourPath[x]);
+		if (Swap) {
 			for (int x = j + 1; x <= k; x++) newTourPath.push_back(tspTourPath[x]);
+			for (int x = i + 1; x <= j; x++) newTourPath.push_back(tspTourPath[x]);
 		} else {
-			for (int x = j + 1; x <= k; x++) newTourPath.push_back(tspTourPath[x]);
 			for (int x = i + 1; x <= j; x++) newTourPath.push_back(tspTourPath[x]);
+			for (int x = j + 1; x <= k; x++) newTourPath.push_back(tspTourPath[x]);
 		}
 		for (int x = k + 1; x < N; x++) newTourPath.push_back(tspTourPath[x]);
 
@@ -144,8 +147,7 @@ class Heuristics {
 
 
 public:
-	Heuristics(CityLocation *cityLocations, int N) :
-			N(N) {
+	Heuristics(CityLocation *cityLocations, int N) : N(N) {
 		this->cityLocations = cityLocations;
 		visited = new bool[N];
 	}
@@ -199,31 +201,34 @@ public:
 		}
 	}
 
-	void TwoOptHeuristic() {
+	void ImprovementHeuristics_2OPT() {
 		resetBuffer();
 
+		// start with an arbitary soln
 		ConstructionHeuristics_NearestNeighbour();
+
 		while (true) {
 			double currentCost = calculateTourCost(tspTourPath, cityLocations);
-			bool Changed = false;
+			bool isChanged = false;
 
+			// deletes 2 edges between i,j   i-/-(i+1)-/-...-/-j--x => reverse (i+1) to (j) => i---j--...--(i+1)---x
 			for (int i = 0; i < tspTourPath.size(); i++) {
 				for (int j = i + 2; j < tspTourPath.size(); j++) {
 					reverse(tspTourPath.begin() + i + 1, tspTourPath.begin() + j + 1);
 					double newCost = calculateTourCost(tspTourPath, cityLocations);
 					if (newCost < currentCost) {
-						Changed = true;
+						isChanged = true;
 						break;
 					}
 					reverse(tspTourPath.begin() + i + 1, tspTourPath.begin() + j + 1);
 				}
-				if (Changed) break;
+				if (isChanged) break;
 			}
-			if (!Changed) break;
+			if (!isChanged) break;
 		}
 	}
 
-	void ThreeOptHeuristic() {
+	void ImprovementHeuristics_3OPT() {
 		resetBuffer();
 
 		ConstructionHeuristics_NearestNeighbour();
@@ -265,10 +270,10 @@ public:
 				ConstructionHeuristics_CheapestInsertion();
 				break;
 			case TwoOPT:
-				TwoOptHeuristic();
+				ImprovementHeuristics_2OPT();
 				break;
 			case ThreeOPT:
-				ThreeOptHeuristic();
+				ImprovementHeuristics_3OPT();
 				break;
 		}
 

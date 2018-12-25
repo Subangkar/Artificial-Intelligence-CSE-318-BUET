@@ -12,7 +12,7 @@ void printSolution(const vector<int> &TSPTourPath, CityLocation *cityLocations) 
 	cout << endl << endl;
 }
 
-//void (*heuristics_functions[])() = {NearestNeighbourHeuristic, NearestInsertionHeuristic, CheapestInsertionHeuristic,
+//void (*heuristics_functions[])() = {ConstructionHeuristics_NearestNeighbour, ConstructionHeuristics_NearestInsertion, ConstructionHeuristics_CheapestInsertion,
 //                                    TwoOptHeuristic, ThreeOptHeuristic};
 
 int main() {
@@ -26,15 +26,16 @@ int main() {
 	for (int i = 0; i < N; i++)
 		cin >> cityLocations[i].x >> cityLocations[i].y;
 
-	Heuristics heuristics(cityLocations, N);
+	auto * heuristics = new Heuristics(cityLocations, N);
 
 	for (int f = 0; f < 5; ++f) {
 		cout << heuristics_name[f] << " :: " << endl;
 //		heuristics_functions[f]();
-		const tsptourpath_t &tsptour = heuristics.getTSPTourPath(heuristicFunc(f));
+		const tsptourpath_t &tsptour = heuristics->getTSPTourPath(heuristicFunc(f));
 		printSolution(tsptour, cityLocations);
 	}
 
+	delete heuristics;
 }
 
 #pragma clang diagnostic pop

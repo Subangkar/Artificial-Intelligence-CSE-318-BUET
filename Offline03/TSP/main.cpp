@@ -16,8 +16,11 @@ void printSolution(const vector<int> &TSPTourPath, CityLocation *cityLocations) 
 //void (*heuristics_functions[])() = {ConstructionHeuristics_NearestNeighbour, ConstructionHeuristics_NearestInsertion, ConstructionHeuristics_CheapestInsertion,
 //                                    ImprovementHeuristics_2OPT, ImprovementHeuristics_3OPT};
 
-int main() {
-	freopen("in.txt", "r", stdin);
+int main(int argc, const char *argv[]) {
+	if (argc > 1) {
+		freopen(argv[1], "r", stdin);
+	} else
+		freopen("in.txt", "r", stdin);
 	freopen("out.txt", "w", stdout);
 
 	srand((unsigned) time(nullptr));
@@ -26,15 +29,21 @@ int main() {
 	cin >> N;
 	CityLocation cityLocations[N];
 
+	int cityNo;
 	for (int i = 0; i < N; i++)
-		cin >> cityLocations[i].x >> cityLocations[i].y;
+		if (argc != 3) cin >> cityLocations[i].x >> cityLocations[i].y;
+		else cin >> cityNo >> cityLocations[i].x >> cityLocations[i].y;
 
-	auto * heuristics = new Heuristics(cityLocations, N);
+	auto *heuristics = new Heuristics(cityLocations, N);
 
 	for (int f = 0; f < 5; ++f) {
+		auto startTime = chrono::steady_clock::now();
 		cout << heuristics_name[f] << " :: " << endl;
 //		heuristics_functions[f]();
 		const tsptourpath_t &tsptour = heuristics->getTSPTourPath(heuristicFunc(f));
+		auto endTime = chrono::steady_clock::now();
+		auto diff = endTime - startTime;
+		cout << "Execution Time : " << chrono::duration<double, milli>(diff).count() << "ms" << endl;
 		printSolution(tsptour, cityLocations);
 	}
 

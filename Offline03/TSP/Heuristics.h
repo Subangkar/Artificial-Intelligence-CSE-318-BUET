@@ -10,12 +10,12 @@
 #define START_CITY_RANDOM (rand()%N) // (N-1) //
 
 enum heuristicFunc {
-	NearestNeighbor = 0, NearestInsertion, CheapestInsertion, TwoOPT, ThreeOPT
+	NearestNeighbor = 0, NearestInsertion, CheapestInsertion, TwoOPT, ThreeOPT, Savings
 };
 
 const char *heuristics_name[] = {"NearestNeighbour Heuristic", "NearestInsertion Heuristic",
                                  "CheapestInsertion Heuristic",
-                                 "2-OPT Heuristic", "3-OPT Heuristic"};
+                                 "2-OPT Heuristic", "3-OPT Heuristic", "Savings Heuristic"};
 
 
 double calculateTourCost(const tsptourpath_t &tourPath, CityLocation *cityLocations) {
@@ -145,6 +145,30 @@ class Heuristics {
 		return newTourPath;
 	}
 
+	bool SavingsIsSameRoute(const city_t *parent, city_t u, city_t v) {
+		city_t pu = parent[u], pv = parent[v];
+		return pu == pv;
+	}
+
+	void SavingsMergeRoute(city_t *parent, city_t u, city_t v) {
+		city_t pu = parent[u], pv = parent[v];
+		city_t p = min(pu, pv);
+
+		for (int i = 0; i < N; ++i) {
+			if (parent[i] == pu || parent[i] == pv)
+				parent[i] = p;
+		}
+	}
+
+	void SavingsAddEdge(vector<vector<city_t >> &adjMat, city_t u, city_t v) {
+		++adjMat[u][v];
+		++adjMat[v][u];
+	}
+
+	void SavingsRemoveEdge(vector<vector<city_t >> &adjMat, city_t u, city_t v) {
+		--adjMat[u][v];
+		--adjMat[v][u];
+	}
 
 public:
 	Heuristics(CityLocation *cityLocations, int N) : N(N) {
@@ -200,6 +224,8 @@ public:
 			insertEdgeToTourPath(i, r);
 		}
 	}
+
+	void ConstructionHeuristics_Savings();
 
 	void ImprovementHeuristics_2OPT() {
 		resetBuffer();
@@ -275,6 +301,9 @@ public:
 			case ThreeOPT:
 				ImprovementHeuristics_3OPT();
 				break;
+			case Savings:
+				ConstructionHeuristics_Savings();
+				break;
 		}
 
 		return tspTourPath;
@@ -284,6 +313,79 @@ public:
 		delete[] visited;
 	}
 };
+
+void Heuristics::ConstructionHeuristics_Savings() {
+	resetBuffer();
+
+	double dist[N][N];
+
+	for (city_t u = 0; u < N; ++u) {
+		for (city_t v = 0; v < N; ++v) {
+			dist[u][v] = cityLocations[u].distanceWith(cityLocations[v]);
+		}
+	}
+
+	city_t d = START_CITY_RANDOM;
+
+	struct savings_t {
+		city_t u, v;
+		double savingsVal;
+
+		bool operator<(const savings_t &rhs) const {
+			return savingsVal < rhs.savingsVal;
+		}
+	};
+
+	std::priority_queue<savings_t> q;
+	for (city_t u = 0, i = 0; u < N; ++u) {
+		for (city_t v = u + 1; v < N; ++v, ++i) {
+			if (u != d && v != d)
+				q.push({u, v, (dist[u][d] + dist[d][v] - dist[u][v])});
+		}
+	}
+
+	vector<vector<city_t>> adjMat(N, vector<city_t>(N, 0));// init to 0
+	city_t parent[N];
+	for (city_t u = 0; u < N; ++u) {
+		parent[u] = u;
+	}
+
+	for (city_t u = 0; u < N; ++u) {
+		if (u != d) {
+			SavingsAddEdge(adjMat, u, d);
+			SavingsAddEdge(adjMat, u, d);
+		}
+	}
+
+	// solution generation
+	while (!q.empty()) {
+		city_t u = q.top().u, v = q.top().v;
+		q.pop();
+
+		if (!SavingsIsSameRoute(parent, u, v) && adjMat[u][d] && adjMat[d][v]) {
+			// not in the same route and has direct edge to depot then merge
+
+			SavingsAddEdge(adjMat, u, v);
+			SavingsMergeRoute(parent, u, v);
+			SavingsRemoveEdge(adjMat, u, d);
+			SavingsRemoveEdge(adjMat, v, d);
+		}
+
+	}
+
+	// solution construction
+	city_t s = d;
+	do {
+		for (int i = 0; i < N; ++i) {
+			if (adjMat[s][i] == 1) {
+				tspTourPath.push_back(s);
+				SavingsRemoveEdge(adjMat, s, i);// removes the edge so that same edge doesn't come twice
+				s = i;
+			}
+		}
+	} while (s != d);
+
+}
 
 
 #endif //TSP_HEURISTICS_H

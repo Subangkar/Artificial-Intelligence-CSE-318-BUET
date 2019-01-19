@@ -36,7 +36,7 @@ int main(int argc, const char *argv[]) {
 
 	auto *heuristics = new Heuristics(cityLocations, N);
 
-	for (int f = 0; f < 5; ++f) {
+	for (int f = 0; f < 6; ++f) {
 		auto startTime = chrono::steady_clock::now();
 		cout << heuristics_name[f] << " :: " << endl;
 //		heuristics_functions[f]();

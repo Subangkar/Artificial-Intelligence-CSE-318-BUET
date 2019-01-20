@@ -10,7 +10,7 @@
 #define START_CITY_RANDOM ( startCity==-1 ? rand()%N : startCity) // (N-1) //
 
 enum heuristicFunc {
-	NearestNeighbor = 0, NearestInsertion, CheapestInsertion, TwoOPT, ThreeOPT, Savings
+	NearestNeighbor = 0, NearestInsertion, CheapestInsertion, TwoOPT, ThreeOPT, Savings, LAST
 };
 
 const char *heuristics_name[] = {"NearestNeighbour Heuristic", "NearestInsertion Heuristic",

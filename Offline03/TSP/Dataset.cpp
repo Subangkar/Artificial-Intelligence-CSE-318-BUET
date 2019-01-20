@@ -1,8 +1,6 @@
 //
 // Created by Subangkar on 19-Jan-19.
 //
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-msc30-c"
 
 #include <chrono>
 #include <set>
@@ -27,11 +25,11 @@ void printSolution(const vector<int> &TSPTourPath, CityLocation *cityLocations) 
 //                                    ImprovementHeuristics_2OPT, ImprovementHeuristics_3OPT};
 
 
-city_t
-getResultStat(CityLocation cityLocations[], int &N, Heuristics &heuristics, heuristicFunc f, double &best, double &avg,
+tsptourpath_t
+getResultStat(int &N, Heuristics &heuristics, heuristicFunc f, double &best, double &avg,
               double &worst, size_t k) {
 	best = numeric_limits<double_t>::max(), worst = 0, avg = 0;
-	city_t bestStart = -1;
+	tsptourpath_t bestTour;
 	set<city_t> startCities;
 	city_t startCity;
 	for (size_t i = 0; i < k; ++i) {
@@ -44,7 +42,7 @@ getResultStat(CityLocation cityLocations[], int &N, Heuristics &heuristics, heur
 		double curCost = calculateTourCost(tsptour, cityLocations);
 		if (curCost < best) {
 			best = curCost;
-			bestStart = tsptour[0];
+			bestTour = tsptour;
 		}
 		if (curCost > worst) {
 			worst = curCost;
@@ -53,7 +51,7 @@ getResultStat(CityLocation cityLocations[], int &N, Heuristics &heuristics, heur
 //		printSolution(tsptour, cityLocations);
 		N = static_cast<int>(tsptour.size());
 	}
-	return bestStart;
+	return bestTour;
 }
 
 vector<tsptourpath_t>
@@ -105,7 +103,7 @@ int main(int argc, const char *argv[]) {
 
 	int N;
 	cin >> N;
-	size_t k = N;
+	auto k = static_cast<size_t>(N);
 
 
 	int cityNo;
@@ -114,7 +112,10 @@ int main(int argc, const char *argv[]) {
 		else cin >> cityNo >> cityLocations[i].x >> cityLocations[i].y;
 
 	cout << argv[1] << " :: " << endl;
-	city_t bestStartCity[10];
+
+//========================== Best Starting Location from Greedy Simple =========================
+	city_t bestStartCity[LAST];
+	tsptourpath_t bestSimpleTour;
 	{
 		cout << endl << "Greedy Simple :: " << endl;
 		auto *heuristics = new Heuristics(cityLocations, N);
@@ -123,23 +124,26 @@ int main(int argc, const char *argv[]) {
 		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  %10s\n", "HeuristicName", "###", "Best Start",
 		       "Best case",
 		       "Worst case", "Avg case", "Exec time");
-		k = N;
+		k = static_cast<size_t>(N);
 		for (int f : heu) {
 			auto startTime = chrono::steady_clock::now();
 			int n = N;
-			city_t bestStart = getResultStat(cityLocations, n, *heuristics, heuristicFunc(f), best, avg, worst, k);
+			bestSimpleTour = getResultStat(n, *heuristics, heuristicFunc(f), best, avg, worst, k);
 			auto endTime = chrono::steady_clock::now();
 			auto diff = endTime - startTime;
-			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n, bestStart,
+			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n, bestTour.front(),
 			       best,
 			       worst, avg, chrono::duration<double, milli>(diff).count());
-			bestStartCity[f] = bestStart;
+			bestStartCity[f] = bestSimpleTour.front();
 		}
 
 		delete heuristics;
 	}
+//==============================================================================================
 
 
+//========================== 3-Best Tours From Random Greedy ===================================
+	vector<tsptourpath_t> bestTours[LAST];
 	{
 		cout << endl << "Greedy Randomized :: " << endl;
 		auto *heuristics = new HeuristicsRandomized(cityLocations, N);
@@ -148,26 +152,28 @@ int main(int argc, const char *argv[]) {
 		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  %10s\n", "HeuristicName", "###", "Best Start",
 		       "Best case",
 		       "Worst case", "Avg case", "Exec time");
-		k = N;
+		k = static_cast<size_t>(N);
 		for (int f : heu) {
 			auto startTime = chrono::steady_clock::now();
 			int n = N;
-			vector<tsptourpath_t> bestTours = getResultStatRandom(n, *heuristics, heuristicFunc(f), best, avg, worst,
-			                                                      bestStartCity[f], k);
+			bestTours[f] = getResultStatRandom(n, *heuristics, heuristicFunc(f), best, avg, worst,
+			                                bestStartCity[f], 10);
 			auto endTime = chrono::steady_clock::now();
 			auto diff = endTime - startTime;
 			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n,
-			       bestTours[1][0],
+			       bestTours[f][1][0],
 			       best,
 			       worst, avg, chrono::duration<double, milli>(diff).count());
-
+			bestTours[f].insert(bestTours[f].begin(), bestSimpleTour);
 		}
 
 //		delete heuristics;
 	}
-
-
+//==============================================================================================
+// 1-> Simple.Best 2-> Random->Best.1 3-> Random->Best.2 4-> Random->Best.3
+	{
+		
+	}
 }
 
-#pragma clang diagnostic pop
 

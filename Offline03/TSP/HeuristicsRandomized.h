@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by Subangkar on 19-Jan-19.
 //
@@ -131,6 +133,67 @@ public:
 				}
 			}
 		} while (s != d);
+	}
+
+	tsptourpath_t ImprovementHeuristics_2OPT_First(const tsptourpath_t &soln) {
+		resetBuffer();
+
+		tspTourPath = soln;
+
+		while (true) {
+			double currentCost = calculateTourCost(tspTourPath, cityLocations);
+			bool isChanged = false;
+
+			// deletes 2 edges between i,j   i-/-(i+1)-/-...-/-j--x => reverse (i+1) to (j) => i---j--...--(i+1)---x
+			// finds and moves to the first neighbor that show improvements
+			for (int i = 0; i < tspTourPath.size(); i++) {
+				for (int j = i + 2; j < tspTourPath.size(); j++) {
+					reverse(tspTourPath.begin() + i + 1, tspTourPath.begin() + j + 1);
+					double newCost = calculateTourCost(tspTourPath, cityLocations);
+					if (newCost < currentCost) {
+						isChanged = true;
+						break;
+					}
+					reverse(tspTourPath.begin() + i + 1, tspTourPath.begin() + j + 1);
+				}
+				if (isChanged) break;
+			}
+			if (!isChanged) break;
+		}
+		return tspTourPath;
+	}
+
+	tsptourpath_t ImprovementHeuristics_2OPT_Best(const tsptourpath_t &soln) {
+		resetBuffer();
+
+		tspTourPath = soln;
+
+		int ii = 0, jj = 0;
+		while (true) {
+			double currentCost = calculateTourCost(tspTourPath, cityLocations);
+			bool isChanged = false;
+
+			for (int i = 0; i < tspTourPath.size(); i++) {
+				for (int j = i + 2; j < tspTourPath.size(); j++) {
+					reverse(tspTourPath.begin() + i + 1, tspTourPath.begin() + j + 1);
+					double newCost = calculateTourCost(tspTourPath, cityLocations);
+					if (newCost < currentCost) {
+						isChanged = true;
+						ii = i;
+						jj = j;
+						currentCost = newCost;
+					}
+					reverse(tspTourPath.begin() + i + 1, tspTourPath.begin() + j + 1);
+				}
+				if (isChanged) {
+					reverse(tspTourPath.begin() + ii + 1, tspTourPath.begin() + jj + 1);
+					break;
+				}
+			}
+			if (!isChanged)
+				break;
+		}
+		return tspTourPath;
 	}
 };
 

@@ -92,6 +92,29 @@ getResultStatRandom(int &N, Heuristics &heuristics, heuristicFunc f, double &bes
 	return bestTours;
 }
 
+
+tsptourpath_t getResultStat2OPT(int &N, HeuristicsRandomized &heuristics, bool first, double &best, double &avg,
+                                double &worst, vector<tsptourpath_t> tours) {
+	best = numeric_limits<double_t>::max(), worst = 0, avg = 0;
+	tsptourpath_t bestTour;
+	for (const auto &tour:tours) {
+		const tsptourpath_t &tsptour = first ? heuristics.ImprovementHeuristics_2OPT_First(tour) :
+		                               heuristics.ImprovementHeuristics_2OPT_Best(tour);
+		double curCost = calculateTourCost(tsptour, cityLocations);
+		if (curCost < best) {
+			best = curCost;
+			bestTour = tsptour;
+		}
+		if (curCost > worst) {
+			worst = curCost;
+		}
+		avg += (curCost / tours.size());
+//		printSolution(tsptour, cityLocations);
+		N = static_cast<int>(tsptour.size());
+	}
+	return bestTour;
+}
+
 int main(int argc, const char *argv[]) {
 	if (argc > 1) {
 		freopen(argv[1], "r", stdin);
@@ -131,7 +154,8 @@ int main(int argc, const char *argv[]) {
 			bestSimpleTour = getResultStat(n, *heuristics, heuristicFunc(f), best, avg, worst, k);
 			auto endTime = chrono::steady_clock::now();
 			auto diff = endTime - startTime;
-			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n, bestTour.front(),
+			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n,
+			       bestSimpleTour.front(),
 			       best,
 			       worst, avg, chrono::duration<double, milli>(diff).count());
 			bestStartCity[f] = bestSimpleTour.front();
@@ -143,7 +167,7 @@ int main(int argc, const char *argv[]) {
 
 
 //========================== 3-Best Tours From Random Greedy ===================================
-	vector<tsptourpath_t> bestTours[LAST];
+	vector<tsptourpath_t> bestTours[LAST]; // for Savings,NNH
 	{
 		cout << endl << "Greedy Randomized :: " << endl;
 		auto *heuristics = new HeuristicsRandomized(cityLocations, N);
@@ -157,7 +181,7 @@ int main(int argc, const char *argv[]) {
 			auto startTime = chrono::steady_clock::now();
 			int n = N;
 			bestTours[f] = getResultStatRandom(n, *heuristics, heuristicFunc(f), best, avg, worst,
-			                                bestStartCity[f], 10);
+			                                   bestStartCity[f], 10);
 			auto endTime = chrono::steady_clock::now();
 			auto diff = endTime - startTime;
 			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n,
@@ -171,9 +195,78 @@ int main(int argc, const char *argv[]) {
 	}
 //==============================================================================================
 // 1-> Simple.Best 2-> Random->Best.1 3-> Random->Best.2 4-> Random->Best.3
+
+
+//================================= 2-OPT First IMP ============================================
+	double best_first_NNH, best_first_SH;
 	{
-		
+		cout << endl << "2OPT First :: " << endl;
+		auto *heuristics = new HeuristicsRandomized(cityLocations, N);
+		double best = 0, worst = 0, avg = 0;
+		int heu[] = {NearestNeighbor, Savings};
+		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  %10s\n", "HeuristicName", "###", "Best Start",
+		       "Best case",
+		       "Worst case", "Avg case", "Exec time");
+		k = static_cast<size_t>(N);
+		for (int f : heu) {
+			auto startTime = chrono::steady_clock::now();
+			int n = N;
+			tsptourpath_t bestTour = getResultStat2OPT(n, *heuristics, true, best, avg, worst, bestTours[f]);
+			auto endTime = chrono::steady_clock::now();
+			auto diff = endTime - startTime;
+			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n,
+			       bestTour[0],
+			       best,
+			       worst, avg, chrono::duration<double, milli>(diff).count());
+
+			if (f == NearestNeighbor)best_first_NNH = best;
+			if (f == Savings)best_first_SH = best;
+		}
+
+//		delete heuristics;
 	}
+//==============================================================================================
+
+
+//================================= 2-OPT Best IMP =============================================
+	double best_best_NNH, best_best_SH;
+	{
+		cout << endl << "2OPT Best  :: " << endl;
+		auto *heuristics = new HeuristicsRandomized(cityLocations, N);
+		double best = 0, worst = 0, avg = 0;
+		int heu[] = {NearestNeighbor, Savings};
+		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  %10s\n", "HeuristicName", "###", "Best Start",
+		       "Best case",
+		       "Worst case", "Avg case", "Exec time");
+		k = static_cast<size_t>(N);
+		for (int f : heu) {
+			auto startTime = chrono::steady_clock::now();
+			int n = N;
+			tsptourpath_t bestTour = getResultStat2OPT(n, *heuristics, false, best, avg, worst, bestTours[f]);
+			auto endTime = chrono::steady_clock::now();
+			auto diff = endTime - startTime;
+			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n,
+			       bestTour[0],
+			       best,
+			       worst, avg, chrono::duration<double, milli>(diff).count());
+
+			if (f == NearestNeighbor)best_best_NNH = best;
+			if (f == Savings)best_best_SH = best;
+		}
+
+//		delete heuristics;
+	}
+//==============================================================================================
+
+//========================================= Ratio Print ========================================
+	{
+		printf("%30s - %30s\n", "Best Improvement", "First Improvement");
+		printf("%14s  %14s - %14s  %14s\n", "NNH", "SH", "NNH", "SH");
+		printf("%14.2f  %14.2f - %14.2f  %14.2f\n", best_best_NNH, best_best_SH, best_first_NNH, best_first_SH);
+	}
+	FILE *fp = fopen("out.txt", "w");
+	fprintf(fp, "%14.2f  %14.2f \n%14.2f  %14.2f\n", best_best_NNH, best_best_SH, best_first_NNH, best_first_SH);
+//==============================================================================================
 }
 
 

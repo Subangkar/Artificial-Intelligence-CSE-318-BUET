@@ -252,7 +252,7 @@ public:
 
 	virtual void ConstructionHeuristics_Savings();
 
-	void ImprovementHeuristics_2OPT() {
+	virtual void ImprovementHeuristics_2OPT() {
 		resetBuffer();
 
 		// start with an arbitary soln

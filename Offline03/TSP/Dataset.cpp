@@ -99,7 +99,7 @@ int main(int argc, const char *argv[]) {
 		freopen(argv[1], "r", stdin);
 	} else
 		freopen("in.txt", "r", stdin);
-	freopen("out.txt", "w", stdout);
+//	freopen("out.txt", "w", stdout);
 
 	srand((unsigned) time(nullptr));
 
@@ -116,17 +116,18 @@ int main(int argc, const char *argv[]) {
 	cout << argv[1] << " :: " << endl;
 	city_t bestStartCity[10];
 	{
-		cout << "Greedy Simple :: " << endl;
+		cout << endl << "Greedy Simple :: " << endl;
 		auto *heuristics = new Heuristics(cityLocations, N);
 		double best = 0, worst = 0, avg = 0;
 		int heu[] = {NearestNeighbor, Savings};
-		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  Exec time\n", "HeuristicName", "###", "Best Start",
+		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  %10s\n", "HeuristicName", "###", "Best Start",
 		       "Best case",
-		       "Worst case", "Avg case");
+		       "Worst case", "Avg case", "Exec time");
+		k = N;
 		for (int f : heu) {
 			auto startTime = chrono::steady_clock::now();
 			int n = N;
-			city_t bestStart = getResultStat(cityLocations, n, *heuristics, heuristicFunc(f), best, avg, worst, 10);
+			city_t bestStart = getResultStat(cityLocations, n, *heuristics, heuristicFunc(f), best, avg, worst, k);
 			auto endTime = chrono::steady_clock::now();
 			auto diff = endTime - startTime;
 			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n, bestStart,
@@ -140,13 +141,14 @@ int main(int argc, const char *argv[]) {
 
 
 	{
-		cout << "Greedy Randomized :: " << endl;
+		cout << endl << "Greedy Randomized :: " << endl;
 		auto *heuristics = new HeuristicsRandomized(cityLocations, N);
 		double best = 0, worst = 0, avg = 0;
 		int heu[] = {NearestNeighbor, Savings};
-		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  Exec time\n", "HeuristicName", "###", "Best Start",
+		printf("%30s - %3s - %10s - %10s - %10s - %10s  -  %10s\n", "HeuristicName", "###", "Best Start",
 		       "Best case",
-		       "Worst case", "Avg case");
+		       "Worst case", "Avg case", "Exec time");
+		k = N;
 		for (int f : heu) {
 			auto startTime = chrono::steady_clock::now();
 			int n = N;
@@ -158,10 +160,10 @@ int main(int argc, const char *argv[]) {
 			       bestTours[1][0],
 			       best,
 			       worst, avg, chrono::duration<double, milli>(diff).count());
-			cout << calculateTourCost(bestTours[0], cityLocations) << endl;
+
 		}
 
-		delete heuristics;
+//		delete heuristics;
 	}
 
 

@@ -194,6 +194,7 @@ public:
 		this->cityLocations = cityLocations;
 		visited = new bool[N];
 		startCity = -1;
+		tspTourPath.reserve(N);
 	}
 
 	void setStartCity(city_t startCity);

@@ -36,17 +36,17 @@ public:
 		resetBuffer();
 
 		int k = 5;
-		city_t i = START_CITY_RANDOM;
+		city_t i = getStartCity();
 		tspTourPath.push_back(i);
 		visited[i] = true;
 		vector<city_t> skipSet;
 		skipSet.reserve(k);
 		while (tspTourPath.size() < N) {
 			skipSet.clear();
-			while (skipSet.size() < k)
+			while (skipSet.size() < k && (tspTourPath.size() + skipSet.size()) <= N)
 				skipSet.push_back(findNearestUnvisited(i, skipSet));
 
-			city_t r = skipSet[rand() % k];
+			city_t r = skipSet[rand() % skipSet.size()];
 			tspTourPath.push_back(r);
 			visited[r] = true;
 			i = r;
@@ -99,15 +99,14 @@ public:
 				q.pop();
 			}
 
-			savings_t selSave = bestkSavings[rand() % k];
-			for (int i = 0; i < k; ++i) {
-				if (bestkSavings[i] != selSave) {
-					q.push(bestkSavings[i]);
+			savings_t selSave = bestkSavings[rand() % bestkSavings.size()];
+			for (auto &bestkSaving : bestkSavings) {
+				if (bestkSaving != selSave) {
+					q.push(bestkSaving);
 				}
 			}
 			city_t u = selSave.u, v = selSave.v;
 
-			cout << "Okay till here Qsize: " << q.size() << endl;
 			if (!SavingsIsSameRoute(parent, u, v) && adjMat[u][d] && adjMat[d][v]) {
 				// not in the same route and has direct edge to depot then merge
 

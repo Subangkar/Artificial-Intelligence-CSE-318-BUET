@@ -265,7 +265,7 @@ int main(int argc, const char *argv[]) {
 		printf("%14.2f  %14.2f - %14.2f  %14.2f\n", best_best_NNH, best_best_SH, best_first_NNH, best_first_SH);
 	}
 	FILE *fp = fopen("out.txt", "w");
-	fprintf(fp, "%14.2f  %14.2f \n%14.2f  %14.2f\n", best_best_NNH, best_best_SH, best_first_NNH, best_first_SH);
+	fprintf(fp, "%14.2f  %14.2f %14.2f  %14.2f\n", best_best_NNH, best_best_SH, best_first_NNH, best_first_SH);
 //==============================================================================================
 }
 

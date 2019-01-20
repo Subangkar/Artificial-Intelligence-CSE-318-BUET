@@ -1,18 +1,29 @@
 #!/usr/bin/env bash
 #best_best_NNH, best_best_SH, best_first_NNH, best_first_SH
 
-
-
-IFS=
+#'pr76.tsp' 'berlin52.tsp' 'st70.tsp'
+COST[0]=108159
+COST[1]=7542
+COST[2]=675
+FILENAME[0]='pr76.tsp'
+FILENAME[1]='berlin52.tsp'
+FILENAME[2]='st70.tsp'
 
 printRatio()
 {
-	output=`c++ ./Dataset.cpp -o a.out && ./a.out $1 1`
+	filename=${FILENAME[$1]}
+	echo -n "$filename "
+	IFS=
+	output=`c++ ./Dataset.cpp -o a.out && ./a.out $filename 1`
+	IFS=" "
 	for i in `cat out.txt` ; do
-		echo $i
+#		if [$i!=""]; then
+			echo -n "$i "
+#		fi
 	done
+	echo ""
 }
 
-printRatio 'pr76.tsp'
-printRatio 'berlin52.tsp'
-printRatio 'st70.tsp'
+printRatio '0'
+printRatio '1'
+printRatio '2'

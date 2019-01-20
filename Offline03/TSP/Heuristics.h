@@ -7,7 +7,7 @@
 
 #include "tspDS.h"
 
-#define START_CITY_RANDOM (rand()%N) // (N-1) //
+#define START_CITY_RANDOM ( startCity==-1 ? rand()%N : startCity) // (N-1) //
 
 enum heuristicFunc {
 	NearestNeighbor = 0, NearestInsertion, CheapestInsertion, TwoOPT, ThreeOPT, Savings
@@ -30,10 +30,21 @@ double calculateTourCost(const tsptourpath_t &tourPath, CityLocation *cityLocati
 
 
 class Heuristics {
+protected:
+	struct savings_t {
+		city_t u, v;
+		double savingsVal;
+
+		bool operator<(const savings_t &rhs) const {
+			return savingsVal < rhs.savingsVal;
+		}
+	};
+
 	CityLocation *cityLocations;
 	bool *visited;
 	int N;
 	tsptourpath_t tspTourPath;
+	city_t startCity;
 
 	void resetBuffer() {
 		tspTourPath.clear();
@@ -41,7 +52,7 @@ class Heuristics {
 	}
 
 
-	city_t findNearestUnvisited(city_t city) {
+	virtual city_t findNearestUnvisited(city_t city) {
 		double minDist = numeric_limits<double>::max();
 		city_t nearestUnvisCity = EOF;
 		for (city_t neighbor = 0; neighbor < N; neighbor++) {
@@ -174,12 +185,17 @@ public:
 	Heuristics(CityLocation *cityLocations, int N) : N(N) {
 		this->cityLocations = cityLocations;
 		visited = new bool[N];
+		startCity = -1;
 	}
 
-	void ConstructionHeuristics_NearestNeighbour() {
+	void setStartCity(city_t startCity);
+
+	city_t getStartCity();
+
+	virtual void ConstructionHeuristics_NearestNeighbour() {
 		resetBuffer();
 
-		city_t i = START_CITY_RANDOM;
+		city_t i = getStartCity();
 		tspTourPath.push_back(i);
 		visited[i] = true;
 
@@ -194,7 +210,7 @@ public:
 	void ConstructionHeuristics_NearestInsertion() {
 		resetBuffer();
 
-		city_t i = START_CITY_RANDOM;
+		city_t i = getStartCity();
 		tspTourPath.push_back(i);
 		visited[i] = true;
 		city_t r = findNearestUnvisited(i);
@@ -211,7 +227,7 @@ public:
 	void ConstructionHeuristics_CheapestInsertion() {
 		resetBuffer();
 
-		city_t i = START_CITY_RANDOM;
+		city_t i = getStartCity();
 		tspTourPath.push_back(i);
 		visited[i] = true;
 
@@ -225,7 +241,7 @@ public:
 		}
 	}
 
-	void ConstructionHeuristics_Savings();
+	virtual void ConstructionHeuristics_Savings();
 
 	void ImprovementHeuristics_2OPT() {
 		resetBuffer();
@@ -325,16 +341,7 @@ void Heuristics::ConstructionHeuristics_Savings() {
 		}
 	}
 
-	city_t d = START_CITY_RANDOM;
-
-	struct savings_t {
-		city_t u, v;
-		double savingsVal;
-
-		bool operator<(const savings_t &rhs) const {
-			return savingsVal < rhs.savingsVal;
-		}
-	};
+	city_t d = getStartCity();
 
 	std::priority_queue<savings_t> q;
 	for (city_t u = 0, i = 0; u < N; ++u) {
@@ -385,6 +392,15 @@ void Heuristics::ConstructionHeuristics_Savings() {
 		}
 	} while (s != d);
 
+}
+
+void Heuristics::setStartCity(city_t startCity) {
+	Heuristics::startCity = startCity;
+}
+
+city_t Heuristics::getStartCity() {
+	startCity = START_CITY_RANDOM;
+	return startCity;
 }
 
 

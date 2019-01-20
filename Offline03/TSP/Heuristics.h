@@ -38,6 +38,14 @@ protected:
 		bool operator<(const savings_t &rhs) const {
 			return savingsVal < rhs.savingsVal;
 		}
+
+		bool operator==(const savings_t &rhs) const {
+			return u == rhs.u && v == rhs.v && savingsVal == rhs.savingsVal;
+		}
+
+		bool operator!=(const savings_t &rhs) const {
+			return !(*this == rhs);
+		}
 	};
 
 	CityLocation *cityLocations;
@@ -344,8 +352,8 @@ void Heuristics::ConstructionHeuristics_Savings() {
 	city_t d = getStartCity();
 
 	std::priority_queue<savings_t> q;
-	for (city_t u = 0, i = 0; u < N; ++u) {
-		for (city_t v = u + 1; v < N; ++v, ++i) {
+	for (city_t u = 0; u < N; ++u) {
+		for (city_t v = u + 1; v < N; ++v) {
 			if (u != d && v != d)
 				q.push({u, v, (dist[u][d] + dist[d][v] - dist[u][v])});
 		}

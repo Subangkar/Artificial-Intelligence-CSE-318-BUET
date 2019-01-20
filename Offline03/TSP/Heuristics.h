@@ -335,6 +335,7 @@ public:
 
 	virtual ~Heuristics() {
 		delete[] visited;
+		visited = nullptr;
 	}
 };
 
@@ -373,7 +374,8 @@ void Heuristics::ConstructionHeuristics_Savings() {
 	}
 
 	// solution generation
-	while (!q.empty()) {
+	size_t nMerge = 0;
+	while (!q.empty() && nMerge < N - 1) {
 		city_t u = q.top().u, v = q.top().v;
 		q.pop();
 
@@ -384,6 +386,8 @@ void Heuristics::ConstructionHeuristics_Savings() {
 			SavingsMergeRoute(parent, u, v);
 			SavingsRemoveEdge(adjMat, u, d);
 			SavingsRemoveEdge(adjMat, v, d);
+
+			++nMerge;
 		}
 
 	}

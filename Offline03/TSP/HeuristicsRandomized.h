@@ -91,7 +91,8 @@ public:
 		int k = 5;
 		vector<savings_t> bestkSavings;
 		bestkSavings.reserve(k);
-		while (!q.empty()) {
+		size_t nMerge = 0;
+		while (!q.empty() && nMerge < N - 1) {
 			bestkSavings.clear();
 			while (bestkSavings.size() < k && !q.empty()) {
 				bestkSavings.push_back(q.top());
@@ -114,6 +115,8 @@ public:
 				SavingsMergeRoute(parent, u, v);
 				SavingsRemoveEdge(adjMat, u, d);
 				SavingsRemoveEdge(adjMat, v, d);
+
+				++nMerge;
 			}
 
 		}

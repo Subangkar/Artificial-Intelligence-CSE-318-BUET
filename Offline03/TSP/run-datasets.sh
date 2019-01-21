@@ -12,17 +12,20 @@ FILENAME[2]='st70.tsp'
 printRatio()
 {
 	filename=${FILENAME[$1]}
-	echo -n "$filename "
+#	echo -n "$filename "
+	printf "%15s - %10.2f - %5d - " "$filename" ${COST[$1]} "100"
 	IFS=
 	output=`c++ ./Dataset.cpp -o a.out && ./a.out $filename 1`
 	IFS=" "
 	for i in `cat out.txt` ; do
-#		if [$i!=""]; then
-			echo -n "$i "
-#		fi
+		ratio=`echo "scale=2; 100*$i/${COST[$1]}" | bc`
+		printf "%10.2f - %5.2f - " "$i" "$ratio"
 	done
 	echo ""
 }
+
+#printf "%15s - %10s - %5s - %10s - %5s - %10s - %5s \n" "filename" "cost" "Ratio" "Best NNH" "Best SH" "First NNH" "First SH"
+printf "%15s - %10s - %5s - %19s - %19s - %19s - %19s \n" "filename" "cost" "Ratio" "Best NNH" "Best SH" "First NNH" "First SH"
 
 printRatio '0'
 printRatio '1'

@@ -169,7 +169,8 @@ public:
 		tspTourPath = soln;
 
 		int ii = 0, jj = 0;
-		while (true) {
+		int c=0;
+		while (c<500) {
 			double currentCost = calculateTourCost(tspTourPath, cityLocations);
 			bool isChanged = false;
 
@@ -187,11 +188,13 @@ public:
 				}
 				if (isChanged) {
 					reverse(tspTourPath.begin() + ii + 1, tspTourPath.begin() + jj + 1);
-					break;
+//					break;
 				}
 			}
 			if (!isChanged)
 				break;
+
+			c++;
 		}
 		return tspTourPath;
 	}

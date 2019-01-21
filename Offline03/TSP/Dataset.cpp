@@ -138,7 +138,7 @@ int main(int argc, const char *argv[]) {
 
 //========================== Best Starting Location from Greedy Simple =========================
 	city_t bestStartCity[LAST];
-	tsptourpath_t bestSimpleTour;
+	tsptourpath_t bestSimpleTour[LAST];
 	{
 		cout << endl << "Greedy Simple :: " << endl;
 		auto *heuristics = new Heuristics(cityLocations, N);
@@ -151,14 +151,14 @@ int main(int argc, const char *argv[]) {
 		for (int f : heu) {
 			auto startTime = chrono::steady_clock::now();
 			int n = N;
-			bestSimpleTour = getResultStat(n, *heuristics, heuristicFunc(f), best, avg, worst, k);
+			bestSimpleTour[f] = getResultStat(n, *heuristics, heuristicFunc(f), best, avg, worst, k);
 			auto endTime = chrono::steady_clock::now();
 			auto diff = endTime - startTime;
 			printf("%30s - %3d - %10d - %10.2f - %10.2f - %10.2f  -  %7.2f ms\n", heuristics_name[f], n,
-			       bestSimpleTour.front(),
+			       bestSimpleTour[f].front(),
 			       best,
 			       worst, avg, chrono::duration<double, milli>(diff).count());
-			bestStartCity[f] = bestSimpleTour.front();
+			bestStartCity[f] = bestSimpleTour[f].front();
 		}
 
 		delete heuristics;
@@ -188,7 +188,7 @@ int main(int argc, const char *argv[]) {
 			       bestTours[f][1][0],
 			       best,
 			       worst, avg, chrono::duration<double, milli>(diff).count());
-			bestTours[f].insert(bestTours[f].begin(), bestSimpleTour);
+			bestTours[f].insert(bestTours[f].begin(), bestSimpleTour[f]);
 		}
 
 //		delete heuristics;
@@ -249,7 +249,7 @@ int main(int argc, const char *argv[]) {
 			       bestTour[0],
 			       best,
 			       worst, avg, chrono::duration<double, milli>(diff).count());
-
+//			printSolution(bestTour, cityLocations);
 			if (f == NearestNeighbor)best_best_NNH = best;
 			if (f == Savings)best_best_SH = best;
 		}

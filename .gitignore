@@ -25,8 +25,12 @@ Offline01/Missionaries-and-Cannibals/\.vscode/
 
 Offline02/nPuzzle/\.idea/
 
-Offline02/nPuzzle/cmake-build-debug/
+**/cmake-build-debug/*
 
 *.out
 
 Offline02/nPuzzle/out\.txt
+
+**/out\.txt
+
+**/\.idea/**/*.xml
